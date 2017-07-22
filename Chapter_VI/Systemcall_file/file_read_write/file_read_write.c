@@ -40,14 +40,14 @@ void _error(const char *error,int line)
 {
    printf("Error!\n");
    printf("Error:%s    %d\n",strerror(errno),line);
-   
+
    exit(0);
 }
 
 int file_write(int fd)
 {
    char str[1000];
-   
+
    gets(str);
    int length = strlen(str);
    str[length] = '\0';
