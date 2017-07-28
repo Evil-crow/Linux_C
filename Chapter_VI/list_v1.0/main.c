@@ -28,13 +28,13 @@ void list_file_single(char *name);                            //没有文件/目
 
 void list_dir_pre(int flag_option,char *path);                //目录信息ls的准备环节,进行目录信息的获取,并且排序;
 
-void list_file(int flag_option,char *path);               //文件信息ls的准备,进行不同选项的选择
+void list_file(int flag_option,char *path);                   //文件信息ls的准备,进行不同选项的选择
 
 void list_file_information(struct stat buffer,char *name);                   //显示文件详细信息
 
 int main(int argc,char **argv)
 {
-    char path[PATH_MAX + 1];                                  //表示最长的文件名
+    char path[PATH_MAX + 1];                                  //表示获取到的文件名
 
     char option[5];                                           //存储ls命令的选项
 
@@ -79,7 +79,7 @@ int main(int argc,char **argv)
     {
         strcpy(path,"./");
         path[2] = '\0';
-        list_file_single(path);
+        list_dir_pre(flag_option,path);
         return 0;
     }
 
@@ -101,13 +101,13 @@ int main(int argc,char **argv)
             }
             if(S_ISDIR(buffer.st_mode))       //判断path为一个目录,则为其补上'/'
             {
-                if(path[strlen(path)-1] != '/')
+                if(path[strlen(argv[i])-1] != '/')
                 {
-                    path[strlen(path)] = '/';
-                    path[strlen(path)+1] = '\0';
+                    path[strlen(argv[i])] = '/';
+                    path[strlen(argv[i])+1] = '\0';
                 }
                 else
-                    path[strlen(path)+1] = '\0';
+                    path[strlen(argv[i])] = '\0';
                 list_dir_pre(flag_option,path);
                 i++;
             }
@@ -213,7 +213,7 @@ void list_file(int flag_option,char *filename)
    name[j] = '\0';
 
    //使用lstat方便处理连接文件
-   if(lstat(name,&buffer) == -1)
+   if(lstat(filename,&buffer) == -1)
    {
       _error("lstat",__LINE__);
    }
@@ -322,8 +322,8 @@ void list_file_information(struct stat buffer, char *name)
    printf("   ");
 
    //根据uid与gid获取文件拥有者的用户及用户组
-   psd = getpwuid(buffer.st_mode);
-   grp = getgrgid(buffer.st_mode);
+   psd = getpwuid(buffer.st_uid);
+   grp = getgrgid(buffer.st_gid);
    printf("%4d  ",buffer.st_nlink);
    printf("%-8s",psd->pw_name);
    printf("%-8s",grp->gr_name);
@@ -348,12 +348,13 @@ void list_file_single(char *name)
 
    length = strlen(name);
    length = file_max_name - length;
-   for(i = 0;i < file_max_name;i++)
+   printf("%-s",name);
+   for(i = 0;i < length;i++)
    {
       printf(" ");
    }
 
-   line_left -= file_max_name+2;
+   line_left -= (file_max_name+2);
 }
 
 void _error(const char *err_string,int line)
