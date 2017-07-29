@@ -8,6 +8,9 @@
 #include<string.h>
 #include<sys/wait.h>
 #include<dirent.h>
+#include<signal.h>
+#include<readline/readline.h>
+#include<readline/history.h>
 
 #define normal      0                                                                  //一般命令
 #define in_put      1                                                                  //输入重定向1 >
@@ -43,9 +46,10 @@ int main(int argc,char **argv)
     }
 
     while(1)                                                                           //shell主体程序
-    {
+    { 
+        signal(SIGINT,SIG_IGN);                                                        //忽略键盘的Ctrl-C输入
         print_shell(  );                                                               //打印shell提示符
-        get_command(command);                                                          //获取用户输入命令
+        get_command(command);                                                          //获取用户输入命令 
         if(strcmp("exit\n",command) == 0 || strcmp("logout\n",command) == 0)
             exit(0);
         for(i = 0;i < 100;i++)

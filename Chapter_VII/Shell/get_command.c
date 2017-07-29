@@ -1,3 +1,4 @@
+#include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
 void get_command(char *str)
@@ -17,6 +18,10 @@ void get_command(char *str)
     if(i > len)
     {
         printf("Command isn't allowed!\n");
+        exit(0);
+    }
+    if(strcmp(str,"^C") == 0)
+    {
         exit(0);
     }
 

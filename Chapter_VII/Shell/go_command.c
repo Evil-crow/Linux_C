@@ -6,6 +6,10 @@
 #include<sys/types.h>
 #include<fcntl.h>
 #include<sys/wait.h>
+#include<signal.h>
+#include<sys/param.h>
+#include<time.h>
+#include<syslog.h>
 
 #define normal      0                                                                  //一般命令
 #define in_put      1                                                                  //输入重定向1 >
@@ -26,8 +30,7 @@ void go_command(int count,char parameter[][256])
     char  *command[count+1];                                                     //用来记录多个命令
     char  *command_next[count+1];                                                //用来记录管道命令中的第二个
     pid_t pid;                                                                   //fork( )进程后,用来获取的子进程PID
-    char *file;
-             //使用file存储要重定向,管道处理的文件
+    char  *file;                                                                 //使用file存储要重定向,管道处理的文件
     
     /*从parameter中取出命令*/
     for(i = 0;i < count;i++)
@@ -91,7 +94,7 @@ void go_command(int count,char parameter[][256])
     /*如果其中有多个重定向,或者管道命令,报错*/ 
     if(flag > 1)
     {
-        printf("Error Command!\n");
+        printf("error command!\n");
         return;
     }
     
@@ -149,21 +152,20 @@ void go_command(int count,char parameter[][256])
                 break;
             }
         }
-    }
-
+    } 
+    
+    /*实现内置命令cd*/
     if(strcmp(command[0],"cd") == 0)
     {
         if(count == 1)
-        {
-            printf("11111111111111");
-            chdir("/home/Crow");
-            exit(0);
+        { 
+            return ;
         }
-        if(command[1] == "~" )
-            strcpy(command[1],"/home/Crow");
+        if(strcmp(command[1],"~") == 0)
+            chdir("/home/Crow");
         if(chdir(command[1]) < -1)
         {
-            printf("Error!");
+            printf("error!");
             exit(0);
         }
         return ;
@@ -177,7 +179,7 @@ void go_command(int count,char parameter[][256])
         exit(0);
     }
 
-    /*case 0,1,2,3,4,5 分别为单命令,各种重定向(4)和管道*/ 
+    /*case 0,1,2,3,4 分别为单命令,各种重定向(3)和管道*/ 
     switch(how)
     {
         case 0:
@@ -185,7 +187,7 @@ void go_command(int count,char parameter[][256])
             {
                 if(!find_command(command[0]))
                 {
-                    printf("Shell: %s: Command not found...",command[0]);
+                    printf("shell: %s: command not found...\n",command[0]);
                     exit(0);
                 }
                 execvp(command[0],command);
@@ -197,7 +199,7 @@ void go_command(int count,char parameter[][256])
             {
                 if(!find_command(command[0]))
                 {
-                    printf("Shell: %s: Command not found...",command[0]);
+                    printf("shell: %s: command not found...\n",command[0]);
                     exit(0);
                 }
                 fd = open(file,O_RDWR|O_CREAT|O_TRUNC,0664);
@@ -211,7 +213,7 @@ void go_command(int count,char parameter[][256])
             {
                 if(!find_command(command[0]))
                 {
-                    printf("Shell: %s: Command not found...",command[0]);
+                    printf("shell: %s: command not found...\n",command[0]);
                     exit(0);
                 }
                 fd = open(file,O_RDONLY);
@@ -225,7 +227,7 @@ void go_command(int count,char parameter[][256])
             {
                 if(!find_command(command[0]))
                 {
-                    printf("Shell: %s: Command not found...",command[0]);
+                    printf("shell: %s: command not found...\n",command[0]);
                     exit(0);
                 }
                 fd = open(file,O_RDWR|O_CREAT|O_APPEND,0644);
@@ -237,20 +239,21 @@ void go_command(int count,char parameter[][256])
         case 4:
             if(pid == 0)
             {
-                int fd2;             //可以理解管道为1的输出导成2的输入,所以需要重新分配文件标识符,状态标识符,以及进程ID
+                int fd2;             //可以理解管道为1的输出导成2的输入,所以需要重新分配文件标识符,状态标识符,以及进程id
                 int status2;
                 int pid2;
-            
-                if(pid2 = fork( ))
+
+                pid2 = fork( ); 
+                if(pid2 == -1)
                 {
-                    printf("Shell: fork failed ...");
+                    printf("shell: fork failed ...\n");
                     return;
                 }
                 else if(pid2 == 0)
                 {
                     if(!find_command(command[0]))
                     {
-                        printf("Shell: %s: Command not found...",command[0]);
+                        printf("shell: %s: command not found...\n",command[0]);
                         exit(0);
                     }
                     fd2 = open("/tmp/pipefile",O_CREAT|O_RDWR|O_TRUNC,0644);
@@ -261,13 +264,13 @@ void go_command(int count,char parameter[][256])
 
                 if(waitpid(pid2,&status2,0) == -1)
                 {
-                    printf("Wait the child process failed!");
+                    printf("wait the child process failed!");
                     exit(0);
                 }
 
                 if(!find_command(command_next[0]))
                 {
-                    printf("Shell: %s: Command not found...",command[0]);
+                    printf("shell: %s: command not found...\n",command[0]);
                     exit(0);
                 }
                 fd2 = open("/temp/pipefile",O_RDONLY);
@@ -275,7 +278,7 @@ void go_command(int count,char parameter[][256])
                 execvp(command_next[0],command_next);
             
                 if(remove("/tmp/pipefile"))
-                    printf("Remove file failed!");
+                    printf("remove file failed!");
                 exit(0);
             }
             break;
@@ -286,12 +289,64 @@ void go_command(int count,char parameter[][256])
     /*对父进程的挂起阻塞操作,同时处理后台运行程序*/ 
     if(background == 1)
     {
-        printf("Processid is %d\n",pid);
-        return ;
+        printf("processid is %d\n",pid);
+        {
+             
+           int pid;
+           int i;
+ 
+           signal(SIGTTOU,SIG_IGN);
+           signal(SIGTTIN,SIG_IGN);
+	       signal(SIGTSTP,SIG_IGN);
+	       signal(SIGHUP,SIG_IGN);
+
+	       pid = fork( );
+	       if(pid > 0)
+	       {
+	          exit(0);            /*直接结束父进程*/
+	       }
+	       else if(pid < 0)
+	       {
+	       printf("Error!");
+	       return ;
+	       }
+
+	   /*建立新的进程组,使得进程组,子进程成为其首进程,以脱离其原来的进程终端*/
+	       setsid( );
+
+	   /*再次建立一个子进程,同时结束父进程,保证进程不是进程组长,同时该进程无法再打开一个新的终端*/
+	       pid = fork( );
+	       if(pid > 0)
+	       exit(0);
+	       else if(pid < 0)
+	       return ;
+
+	   /*关闭所有从父进程继承的不许要得文件描述符*/
+	       for(i = 0;i < NOFILE;close(i++));
+
+	   /*改变工作目录为/,使其不与其他的文件系统牵连*/
+	       chdir("/");
+
+	   /*将文件屏蔽字设置为0*/
+	       umask(0);
+
+	   /*忽略SIGGHLD信号*/
+	       signal(SIGCHLD,SIG_IGN);
+
+ 	       if(!find_command(command[0]))
+           {
+                printf("shell: %s: command not found...\n",command[0]);
+                exit(0);
+           }
+           execvp(command[0],command);
+           exit(0);
+        } 
+    
+        
     }    
     if(waitpid(pid,&status,0) == -1)                                      //父进程等待子进程失败
     {
-        printf("Wait chile process failed!");
+        printf("wait chile process failed!");
         exit(0);
     }
 }
