@@ -1,3 +1,4 @@
+#include<string.h>
 #include<unistd.h>
 #include<stdlib.h>
 #include<stdio.h>
@@ -27,6 +28,8 @@ void print_shell(void)
         Dir[i] = dir[j];
     }
     Dir[i+1] = '\0';
+    if(strcmp(Dir,"Crow") == 0)
+        strcpy(Dir,"~");
 
     printf("[Crow@Shell %s]Σ ",Dir);
 }

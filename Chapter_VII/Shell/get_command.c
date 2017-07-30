@@ -9,6 +9,10 @@ void get_command(char *str)
 
     i = 0;
     ch = getchar( );
+    if(ch == '\n')
+    {
+        return ;
+    }
     while(ch != '\n')
     {
         str[i++] = ch;
@@ -26,5 +30,6 @@ void get_command(char *str)
     }
 
     str[i++] = '\n';
-    str[i++] = '\0'; 
+    str[i++] = '\0';
+
 }
