@@ -38,7 +38,10 @@ int main(int argc, char **argv)
             sleep(1);
             printf("a = %d,b = %d\n",a,b);
          }
+         
          _exit(0);                                        /*注意此处应该如何对子进程进行操作*/
+         
+         //return;
       case -1:
          printf("Error!");
          break;

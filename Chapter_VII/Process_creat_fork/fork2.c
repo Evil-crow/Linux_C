@@ -13,7 +13,7 @@ int main(int argc,char **argv)
   /* printf("Fork start!");*/
    printf("Fork start!\n");
    pid = fork( );
-   printf("1111\n");
+
    switch(pid)
    {
       case 0:
@@ -32,7 +32,7 @@ int main(int argc,char **argv)
    while(k--)
    {
       printf("%s\n%d\n",s,k);
-      sleep(1);
+      sleep(2);
    }
 
    return 0;

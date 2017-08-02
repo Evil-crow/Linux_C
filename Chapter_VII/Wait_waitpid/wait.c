@@ -59,7 +59,7 @@ int main(int argc,char **argv)
 
    while(k--)
    {
-      sleep(2);
+      sleep(3);
       printf("Child process is running!\n");
    }
    exit(exit_code);
@@ -88,9 +88,14 @@ int main(int argc,char **argv)
  * 进行判断,此处就使用到了wait中奇妙的宏
  *
  * 用WIFEXITED获取退出信息
+ *
  * 用WIFEXITSTATUS获取退出码中低8位,即exit_code
+ *
  * 最后编译完成后,程序运行期间,再开一个终端
+ *
  * ps -aux可以观察到父进程处于 S,即阻塞状态(等待状态)
- * 至于wait,waitpid的详细,我会在Blog中说明 *
+ *
+ * 至于wait,waitpid的详细,我会在Blog中说明
+ *
  */
  

@@ -45,3 +45,15 @@ void *thread2(void *arg)
     printf("Thread %u ends,thread's tsd is %d\n",pthread_self(  ),pthread_getspecific(key));
 
 }
+
+/* 对此段代码,其中需要注意的地方是,
+ *
+ * 一,关于Thid的问题,使用%d,整型根本保存不下线程ID,必须使用%u,不然会出现溢出
+ *
+ * 二,即是任意类型指针的问题,(void *)可以指向任何类型的数据,但是会出现警告
+ *
+ * 而在网路上的解法都是直接进行取地址去获取地址,并传参
+ *
+ * 至于细节,还需要再琢磨
+ *
+ */

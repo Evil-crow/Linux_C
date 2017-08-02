@@ -4,7 +4,7 @@
  *
  * 而且,具体要分清子进程对父进程的那些内容实现了拷贝,具体理解
  *
- * 最直观的一个例子缓冲区,可通国一下程序理解           */
+ * 最直观的一个例子缓冲区,可通过以下程序理解           */
 
 #include<stdio.h>
 #include<sys/types.h>
@@ -15,7 +15,7 @@ int main(int argc,char **argv)
   /* printf("Fork start!");*/            /*子进程对缓冲区的数据实行了拷贝,虽然fork( )在printf之后*/
    printf("Fork start!\n");
    pid = fork( );
-   printf("1111\n");
+
    switch(pid)
    {
       case 0:
