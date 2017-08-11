@@ -16,7 +16,7 @@ struct sign                   //使用包装好的包进行登录
 };
 void _error(const char *string,int line);
 
-int sign_in_menu(int sock_fd);
+int sign_in_client(int sock_fd);
 
 int main(int argc,char **argv)
 {
@@ -25,6 +25,7 @@ int main(int argc,char **argv)
     int                       ret;
     int                       result;                           //登录注册返回的结果
 
+    
     if(argc < 3)
     {
         printf("Error1!\n");
@@ -45,7 +46,8 @@ int main(int argc,char **argv)
         _error("connect",__LINE__);
     sleep(1);
     printf("连接成功\n");
-    result = sign_in_menu(sock_fd);
+    result = sign_in_client(sock_fd);
+    printf("%d\n",result);
     if(result != 0)
     {
         if(result == 1)
@@ -53,12 +55,16 @@ int main(int argc,char **argv)
         if(result == 2)
         printf("此用户不存在\n");
         if(result == 3)
-        printf("此用户已登录/存在\n");
+        printf("此用户已登录\n");
+        if(result == 4)
+        printf("此用户已存在\n");
+        if(result == 5)
+        printf("两次输入密码不一致\n");
         exit(0);
     }
     printf("登录用户成功!\n");
     getchar( );
-    system("cls");                                  //清屏
+    system("clear");                              //清屏
     
     close(sock_fd);
 
@@ -74,46 +80,48 @@ void _error(const char *string,int line)
     exit(EXIT_FAILURE);
 }
 
-int sign_in_menu(int sock_fd)
+int sign_in_client(int sock_fd)
 {
-    int           choice;
     struct sign   user;                     //使用的结构体
     int result;
     printf("============================================================\n\n");
     printf("                          1.Sign_in\n\n");
     printf("                          2.Register\n\n");
-    printf("                          3.Quit\n\n");
+    printf("                          0.Quit\n\n");
     printf("============================================================\n\n");
     memset(&user,0,sizeof(struct sign));                    //初始化结构体
     scanf("%d",&user.choice);
-    switch(choice)
+    switch(user.choice)
     {
         case 1:
-            printf("请输入用户名(12位):");
+            printf("请输入用户名:");
             scanf("%s",user.username);
-            printf("请输入密码(12位):");
+            printf("请输入密码:");
             system("stty -echo");                           //隐藏密码
             scanf("%s",user.passwd1);
             system("stty echo");
             send(sock_fd,&user,sizeof(struct sign),0);      //发送登录包
             break;
         case 2:
-            printf("请输入用户名(12位):");
+            printf("请输入用户名:");
             scanf("%s",user.username);
-            printf("请输入密码(12位):");
+            printf("请输入密码:");
             system("stty -echo");                           //隐藏密码
             scanf("%s",user.passwd1);
+            printf("\n");
             system("stty echo");
-            printf("请再次输入密码(12位):");
+            printf("请再次输入密码:");
             system("stty -echo");                           //隐藏密码
             scanf("%s",user.passwd2);
             system("stty echo");
             send(sock_fd,&user,sizeof(struct sign),0);      //发送注册包
             break;
-        case 3:
+        case 0:
             exit(EXIT_SUCCESS);
             break;
     }
-    recv(sock_fd,&result,1,0);
+    send(sock_fd,&user,sizeof(struct sign),0);
+
+    recv(sock_fd,&result,sizeof(int),0);
     return result;
 }
