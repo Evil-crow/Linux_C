@@ -4,15 +4,13 @@
 #include<unistd.h>
 #include<pthread.h>
 #include<netinet/in.h>
-#include"error.h"
+#include"epoll_server.h"
+#include"main.h"
 
-#define MAX_EVS               30                 //最大的消息队列
-#define TIME_OUT              100                //最大的等待时间
 void epoll_server(int listen_fd)
 {
     /*创建epoll实例*/
-    int epoll_fd;                                //epoll_create产生的注册表
-    int ret;                                     //同样用来处理返回值
+    int ret;                                     //同样用来处理返回值,epoll_fd为全局变量
     epoll_fd = epoll_create(256);                //进行注册表的创建,size自从内核2.6.x后并没有实际的意义
     if(epoll_fd < 0)
         _error("epoll_create",__LINE__);
@@ -44,14 +42,15 @@ void epoll_server(int listen_fd)
                 printf("epoll_timeout\n");
                 break;
             default:
-                for(int i = i;i < ret;i++)
+                for(int i = 1 ; i < ret ; i++)
                 {
-                    if((evs[i].data.fd == listen_fd) && (evs[i].events && EPOLLIN)   //判断是否为监听套接字且为读事件
+                    if((evs[i].data.fd == listen_fd) && (evs[i].events & EPOLLIN))   //判断是否为监听套接字且为读事件
                     {
                         struct sockaddr_in cli_addr;
-                        
+                        socklen_t          cil_len;
+                        cil_len = sizeof(struct sockaddr_in); 
                         /*进行套接字的连接*/
-                        int conn_fd = accept(listen_fd,(struct sockaddr *)&cli_addr,sizeof(struct cli_addr));
+                        int conn_fd = accept(listen_fd,(struct sockaddr *)&cli_addr,&cil_len);
                         if(conn_fd < 0)
                             _error("accept",__LINE__);
 
@@ -71,13 +70,12 @@ void epoll_server(int listen_fd)
                             /*创建线程,并且传入连接套接字,进行处理*/
                             pthread_create(&thid,NULL,(void *)menu,evs[i].data.fd);
                             pthread_detach(thid);                 //在线程外部调用,回收资源
-                            /*ep_ev.data.fd = evs[i].data.fd;
-                            ep_ev.events = EPOLLIN | EPOLLONESHOT;
-                            epoll_ctl(epoll_fd,EPOLL_CTL_MOD,evs[i].data.fd,&ep_ev);*/
-                        } 
-                    }
+                            
+                            //如果套接字关闭连接
+                        }
+                    }   
                 }
                 break;
         }
     }
-}
+}   

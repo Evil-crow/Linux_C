@@ -5,11 +5,10 @@
 #include<string.h>
 #include<sys/socket.h>
 #include"main.h"
-#include"error.h"
 
 #define    PORT         12121
 #define    LISTENLINE   30
-int socket_creat(void)
+int listen_fd_create(void)
 {
     int                     listen_fd;
     int                     optval;                       //setsockopt使用
