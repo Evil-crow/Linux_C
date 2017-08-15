@@ -5,7 +5,8 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<stdlib.h>
-#include"error.h"
+
+extern void _error(const char *string,int line);
 
 #define SOCK_PORT            12121                     //设置绑定的主机端口
 int sock_fd_create(void)
@@ -26,8 +27,12 @@ int sock_fd_create(void)
     sleep(2);
     ret = connect(sock_fd,(struct sockaddr *)&sock_addr,sizeof(struct sockaddr_in));   //进行连接服务器
     if(ret < 0)
+    {
         _error("connect",__LINE__);
+        exit(EXIT_SUCCESS);
+    }
 
-    printf("Connect Successfully!");
+    printf("Connect Successfully!\n");
     return sock_fd;                                    //创建好客户端连接用套接字    
 }
+

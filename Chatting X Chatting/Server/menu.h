@@ -12,9 +12,10 @@ struct friends_operation
 struct sign
 {
     int choice_sign;                        //进行登录选择
-    char name[MAX_STR];
+    char username[MAX_STR];
     char passwd1[MAX_STR];                  //登录密码
     char passwd2[MAX_STR];                  //注册密码
+    int  result;                            //登录注册包回馈的结果
 };
 struct data
 {
@@ -35,10 +36,8 @@ struct node_server
 };
 void menu(int conn_fd);
 
-void _error(const char *string,int line);
+void sign_register(int conn_fd,struct node_server user);
 
-void sign_register(int conn_fd,struct node user);
-
-void data_communication(int conn_fd,struct node user);
+//void data_communication(int conn_fd,struct node_server user);
 
 #endif

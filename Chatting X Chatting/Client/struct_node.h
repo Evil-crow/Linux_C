@@ -13,9 +13,10 @@ struct friends_operation
 struct sign
 {
     int choice_sign;                        //进行登录选择
-    char name[MAX_STR];
+    char username[MAX_STR];
     char passwd1[MAX_STR];                  //登录密码
     char passwd2[MAX_STR];                  //注册密码
+    int  result;                            //登录注册包回馈的结果
 };
 struct data
 {

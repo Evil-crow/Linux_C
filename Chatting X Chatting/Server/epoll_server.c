@@ -4,13 +4,18 @@
 #include<unistd.h>
 #include<pthread.h>
 #include<netinet/in.h>
+#include<stdlib.h>
 #include"epoll_server.h"
 #include"main.h"
+
+int epoll_fd;                                //定义epoll注册表,在其他文件中使用extern引用
+
+extern void _error(const char *string,int line);
 
 void epoll_server(int listen_fd)
 {
     /*创建epoll实例*/
-    int ret;                                     //同样用来处理返回值,epoll_fd为全局变量
+    int ret;                                     //同样用来处理返回值,epoll_fd为全局变量  
     epoll_fd = epoll_create(256);                //进行注册表的创建,size自从内核2.6.x后并没有实际的意义
     if(epoll_fd < 0)
         _error("epoll_create",__LINE__);
@@ -32,17 +37,17 @@ void epoll_server(int listen_fd)
     int epoll_ret;                                //epoll专用返回的事件发生数
     while(1)                                      //在永真循环中,一直用epoll管理
     {
-        epoll_ret = epoll_wait(epoll_fd,evs,maxnum,timeout);   //epoll_wait获取返回值
+        epoll_ret = epoll_wait(epoll_fd,evs,maxnum,-1);   //epoll_wait获取返回值
         switch(ret)
         {
             case -1:
                 printf("epoll_error!\n");
                 break;
             case 0:
-                printf("epoll_timeout\n");
+                printf("epoll_timeout!\n");
                 break;
             default:
-                for(int i = 1 ; i < ret ; i++)
+                for(int i = 1 ; i <= ret ; i++)
                 {
                     if((evs[i].data.fd == listen_fd) && (evs[i].events & EPOLLIN))   //判断是否为监听套接字且为读事件
                     {
@@ -59,7 +64,10 @@ void epoll_server(int listen_fd)
                         ep_ev.data.fd = conn_fd;               //epoll处理的是连接套接字 
                         ret = epoll_ctl(epoll_fd,EPOLL_CTL_ADD,conn_fd,&ep_ev);
                         if(ret < 0)
-                            _error("epoll_ctl",__LINE__); 
+                        {
+                            _error("epoll_ctl",__LINE__);
+                            exit(0);
+                        } 
                     }
                     else                      //如果并非是监听套接字,而是其他的连接套接字
                     {

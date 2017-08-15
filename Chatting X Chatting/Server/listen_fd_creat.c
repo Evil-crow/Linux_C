@@ -8,6 +8,9 @@
 
 #define    PORT         12121
 #define    LISTENLINE   30
+
+extern void _error(const char *string,int line);
+
 int listen_fd_create(void)
 {
     int                     listen_fd;

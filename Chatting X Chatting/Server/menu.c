@@ -8,19 +8,26 @@
 
 struct epoll_event epoll_ev;            //epoll_event类型结构体,用于注册事件使用
 
+extern int epoll_fd;                       //在epoll_server中定义,此处为引用
+
+extern void _error(const char *string,int line);
+
 void menu(int conn_fd)
 {
-    struct node user;                   //进行接受的结构体
-    int ret;                            //处理返回值
+    struct node_server user;                   //进行接受的结构体
+    int ret;                                   //处理返回值
+    
 
-    ret = recv(conn_fd,&user,sizeof(struct node),0);
+    ret = recv(conn_fd,&user,sizeof(struct node_server),0);
     if(ret <= 0)
     {
         if(ret < 0)                         //表示接受失败
             _error("recv",__LINE__);
-        if(ret == 0)                        //表示对方已经关闭连接
-            epoll_ctl(epoll_fd,EPOLL_CTL_DEL,conn_fd,NULL);      //从epoll注册表中删除该事件(好像不行,肯定有返回值)
+        if(ret == 0)                     //表示对方已经关闭连接
+        {
+            epoll_ctl(epoll_fd,EPOLL_CTL_DEL,conn_fd,NULL);      //从epoll注册表中删除该事件,并关闭套接字.
             close(conn_fd);
+        }
     }
     else                                  //有返回值的情况,进行解析
     {
@@ -30,7 +37,7 @@ void menu(int conn_fd)
                 sign_register(conn_fd,user);             //进行登录注册的函数
                 break;
             case 2:                                       //表示进行操作的函数
-                data_communication(conn_fd,user);        //进行数据操作通信的函数
+                //data_communication(conn_fd,user);        //进行数据操作通信的函数
                 break;
         }
     }
