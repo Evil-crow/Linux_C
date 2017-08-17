@@ -7,4 +7,8 @@ void work(int sock_fd);                       //传入连接套接字进行工�
 
 void _recv(int sosk_fd);                      //一直进行内容获取的线程
 
+void sign_in(int sock_fd);                  //登录操作的函数
+
+void chat_data(int sock_fd);                //登录后进行操作的函数
+
 #endif

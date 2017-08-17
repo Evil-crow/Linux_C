@@ -34,11 +34,13 @@ void epoll_server(int listen_fd)
     int maxnum = MAX_EVS;                         //任务队列中的最大数量
     int timeout = TIME_OUT;                       //最大的等待时间
 
-    int epoll_ret;                                //epoll专用返回的事件发生数
+    int epoll_ret = 0;                                //epoll专用返回的事件发生数
     while(1)                                      //在永真循环中,一直用epoll管理
     {
         epoll_ret = epoll_wait(epoll_fd,evs,maxnum,-1);   //epoll_wait获取返回值
-        switch(ret)
+        if(epoll_ret > 0)
+
+        switch(epoll_ret)
         {
             case -1:
                 printf("epoll_error!\n");
@@ -47,7 +49,7 @@ void epoll_server(int listen_fd)
                 printf("epoll_timeout!\n");
                 break;
             default:
-                for(int i = 1 ; i <= ret ; i++)
+                for(int i = 0 ; i < epoll_ret ; i++)
                 {
                     if((evs[i].data.fd == listen_fd) && (evs[i].events & EPOLLIN))   //判断是否为监听套接字且为读事件
                     {
@@ -77,9 +79,8 @@ void epoll_server(int listen_fd)
 
                             /*创建线程,并且传入连接套接字,进行处理*/
                             pthread_create(&thid,NULL,(void *)menu,evs[i].data.fd);
+
                             pthread_detach(thid);                 //在线程外部调用,回收资源
-                            
-                            //如果套接字关闭连接
                         }
                     }   
                 }

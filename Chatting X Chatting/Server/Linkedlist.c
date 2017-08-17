@@ -36,20 +36,37 @@ list *linkedlist_add(list *pHead,int conn_fd,char *name)
     pNew->next = NULL;                                         //链表末尾指空
     pEnd = pNew;                                               //保留节点
 
-    free(pNew);                                                //释放内存
     return pHead;                                              //最后返回头节点
 }
 
-list *linkedlist_seek(list *pHead,char *name)
+list *linkedlist_seek_username(list *pHead,char *name)
 {
     int flag = 0;                                              //用来标记是否找到目标节点
     list *temp;                                                //中继节点
-    if(pHead == NULL)
-        exit(EXIT_SUCCESS);
-    temp = pHead;
-    while(temp->next != NULL)
+    temp = pHead->next;
+    while(temp != NULL)
     {
         if(strcmp(name,temp->name) == 0)
+        {
+            flag = 1;
+            return temp;
+        }
+        temp = temp->next;
+    }
+    if(flag == 0)
+    return NULL;                                               //返回NULL表示没有找到节点
+
+    return 0;
+}
+
+list *linkedlist_seek_conn_fd(list *pHead,int conn_fd)
+{
+    int flag = 0;                                              //用来标记是否找到目标节点
+    list *temp;                                                //中继节点
+    temp = pHead->next;
+    while(temp != NULL)
+    {
+        if(temp->conn_fd == conn_fd)
         {
             flag = 1;
             return temp;
@@ -66,21 +83,19 @@ list *linkedlist_del(list *pHead,char *name)
 {
     list *cur;                                                 //表示当前节点
     list *prev;                                                //保存上一个节点,用于删除
+    list *temp;                                                //要删除的目标节点
 
     if(pHead == NULL)
         exit(EXIT_SUCCESS);
     cur = pHead;
     prev = cur;
-    while(cur->next != NULL)
+    temp = linkedlist_seek_username(pHead,name);
+    while(cur != temp)
     {
-        if(strcmp(cur->name,name) == 0)
-        {
-            prev->next = cur->next;                            //跳过当前节点,即完成删除操作
-            break;
-        }
-        prev = cur;                                            //prev保存当前节点
-        cur = cur->next;                                       //继续向下遍历
+        prev = cur;
+        cur = cur->next;
     }
+    prev->next = cur->next;                                     //进行节点的删除
 
     return pHead;                                              //返回头节点
 }

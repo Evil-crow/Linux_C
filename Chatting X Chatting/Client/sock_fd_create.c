@@ -23,8 +23,8 @@ int sock_fd_create(void)
     sock_addr.sin_family = AF_INET;                    //设置为IPV4协议族
     sock_addr.sin_port = htons(SOCK_PORT);             //设置端口为绑定的端口12121
     inet_aton("127.0.0.1",&sock_addr.sin_addr);            //设置IP地址
-    printf("正在连接服务器.....\n\n");
-    sleep(2);
+    printf("\t\t\t\t正在连接服务器.....\n\n");
+    sleep(1);
     ret = connect(sock_fd,(struct sockaddr *)&sock_addr,sizeof(struct sockaddr_in));   //进行连接服务器
     if(ret < 0)
     {
@@ -32,7 +32,7 @@ int sock_fd_create(void)
         exit(EXIT_SUCCESS);
     }
 
-    printf("Connect Successfully!\n");
+    printf("\t\t\t\t连接成功!\n");
     return sock_fd;                                    //创建好客户端连接用套接字    
 }
 

@@ -14,6 +14,8 @@ list *linkedlist_add(list *pHead,int conn_fd,char *name);       //添加节点�
 
 list *linkedlist_del(list *pHead,char *name);                   //节点删除函数
 
-list *linkedlist_seek(list *pHead,char *name);                  //查询节点函数
+list *linkedlist_seek_username(list *pHead,char *name);                  //查询用户名节点函数
+
+list *linkedlist_seek_conn_fd(list *pHead,int conn_fd);                  //查询连接套接字节点函数
 
 #endif

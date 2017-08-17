@@ -6,28 +6,32 @@
 #include<sys/stat.h>
 #include<fcntl.h>
 #include<unistd.h>
-#include"menu.h"
 #include"Linkedlist.h"
+#include"struct_node_server.h"
 
 extern list *pHead;                                                 //主函数中的头节点,此处引用
 
 extern void _error(const char *string,int line);
 
+extern char *get_time(void);                                              //主函数中定义的获取时间函数
+
 int judge(FILE*fp);                                                   //判断文件是否为空
+
 void sign_register(int conn_fd,struct node_server user)
 {
     FILE *fp;                                                          //文件指针
+    int   ret;
     char username[MAX_STR];
     char password[MAX_STR];
     fp = fopen("/home/Crow/Public/Information/user","a+");              //以a+方式打开文件
     if(fp == NULL)
         _error("fopen",__LINE__);
-    fseek(fp,0L,0);                                                     //使文件指针处于文件开始处
     switch(user.consumer.choice_sign)
     {
         case 1:                                                   //进行登录选项
             if(judge(fp))
             {
+                fseek(fp,0L,0);
                 while(!feof(fp))                                  //当没有读到文件末尾时
                 {
                     fscanf(fp,"%s %s\n",username,password);       //读出文件中的用户名和密码
@@ -36,29 +40,46 @@ void sign_register(int conn_fd,struct node_server user)
                         if(strcmp(password,user.consumer.passwd1) == 0)
                         {
                             user.consumer.result = 0;              //用户名,密码完全匹配.登录成功
+                            FILE *sp;
+                            char str[200];
+                            strcpy(str,get_time( ));
+                            sp = fopen("/home/Crow/Public/Information/server_log","a+");
+                            fprintf(sp,"%s sign_in : %s\n",user.consumer.username,str);
+                            fclose(sp);
                             pHead = linkedlist_add(pHead,conn_fd,user.consumer.username);
                             /*将登录成功的用户,添加进入链表中*/
-                            break;
+                            while(ret != sizeof(struct node_server))
+                                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                            return ;
                         }
                         user.consumer.result = 3;                  //登录时.密码错误
-                        break;
+                        while(ret != sizeof(struct node_server))
+                            ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                        return ;
                     }
                 }
                 user.consumer.result = 2;                          //遍历完成,没有该用户名
-                break;
+                while(ret != sizeof(struct node_server))
+                    ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                return ;
             }
             user.consumer.result = 2;                              //文件为空,用户名不存在
-            break;
+            while(ret != sizeof(struct node_server))
+                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+            return ;
         case 2:                                                  //进行注册选项
             if(judge(fp))
             {
+                fseek(fp,0L,0);                                  //使文件指针指向开头
                 while(!feof(fp))
                 {
                     fscanf(fp,"%s %s\n",username,password);             //从文件中读出用户名及密码
                     if(strcmp(username,user.consumer.username) == 0)    //该用户已经被注册过
                     {
                         user.consumer.result = 1;
-                        break; 
+                        while(ret != sizeof(struct node_server))
+                            ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                        return ;
                     }      
                 }
             }
@@ -69,14 +90,17 @@ void sign_register(int conn_fd,struct node_server user)
             strcat(str,user.consumer.username);                                      //拼接出路径名
             mkdir(str,0755);
             chdir(str);
-            creat("group_information",0755);
-            creat("friens_list",0755);
-            creat("belong_to_group",0755);
+            creat("groups_information",0644);
+            creat("friends_list",0644);
+            creat("buffer",0644);                                                   //创建缓冲区,用于私聊暂存数据
             user.consumer.result = 0;
-            break;
+            while(ret != sizeof(struct node_server))
+                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+            return ;
     }
     /*在switch-case语句之后,进行sign数据包的回馈*/
-    send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+    
+    
 }
 
 int judge(FILE *fp)
