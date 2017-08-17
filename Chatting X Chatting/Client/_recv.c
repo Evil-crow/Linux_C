@@ -9,6 +9,8 @@
 
 struct node_client   recv_user;            //用于recv的结构体
 
+extern int chat_status;                    //表明状态
+
 extern void _error(const char *string,int line);
 
 void _recv(int sock_fd)
@@ -16,7 +18,7 @@ void _recv(int sock_fd)
     
     int                  ret;             //用来处理返回值
     char                  ch;             //用于判断键位
-
+    FILE *fp;                             //用于buffer的文件指针
     while(1)
     {
         //while(ret != sizeof(struct node_client))
@@ -66,6 +68,18 @@ void _recv(int sock_fd)
                 switch(recv_user.my_firend.choice_friend)
                 {
                     case 1:                                    //choice_friend == 1 表示开始私聊
+                        /*私聊收到的消息,分为用户在私聊界面,和不在私聊界面的情况*/
+                        if(chat_status == 1)                   //表示在私聊界面
+                        {
+                            printf("date:%s %s\n %s: %s \n",__DATE__,__TIME__,recv_user.consumer.username,recv_user.my_firend.friend_message);
+                        }
+                        else                                   //表示用户不再聊天界面
+                        {
+                            printf("您收到%s发来的消息,请及时查看!\n",recv_user.consumer.username);
+                            fp = fopen("/home/Crow/Public/buffer","a+");      //追加信息
+                            fprintf(fp,"%s %s %s %s\n",__DATE__,__TIME__,recv_user.consumer.username,recv_user.my_firend.friend_message);
+                            fclose(fp);                        //写完关闭文件
+                        }
                         break;
                     case 2:                                    //表示为添加好友的请求
                         printf("您有一条添加好友的系统消息,请及时前往消息盒子查看\n");

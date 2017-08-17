@@ -55,3 +55,7 @@
 18."\033[01;34m Hello World\033[0m\n",可以使用此通式进行printf有颜色字符串的打印
 
 19,使用信号函数signal(SIGINT/SIGPIPE,SIG_IGN);使客户端和服务端保持稳定,健壮性.
+
+20.客户端设置的buffer需要进行解释,还有,文件操作是真得快把我写吐了...
+
+21.服务端直接Ctrl-C会爆炸,谨慎处理,使用signal将SIGINT屏蔽掉即可

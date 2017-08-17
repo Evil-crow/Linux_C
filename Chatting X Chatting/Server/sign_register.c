@@ -19,10 +19,12 @@ int judge(FILE*fp);                                                   //判断�
 
 void sign_register(int conn_fd,struct node_server user)
 {
-    FILE *fp;                                                          //文件指针
+    FILE *fp;                                                         //文件指针
     int   ret;
     char username[MAX_STR];
     char password[MAX_STR];
+    char pwd[200];
+    char str_name[30];
     fp = fopen("/home/Crow/Public/Information/user","a+");              //以a+方式打开文件
     if(fp == NULL)
         _error("fopen",__LINE__);
@@ -48,8 +50,6 @@ void sign_register(int conn_fd,struct node_server user)
                             fclose(sp);
                             pHead = linkedlist_add(pHead,conn_fd,user.consumer.username);
                             /*将登录成功的用户,添加进入链表中*/
-                            while(ret != sizeof(struct node_server))
-                                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
                             return ;
                         }
                         user.consumer.result = 3;                  //登录时.密码错误
@@ -92,7 +92,8 @@ void sign_register(int conn_fd,struct node_server user)
             chdir(str);
             creat("groups_information",0644);
             creat("friends_list",0644);
-            creat("buffer",0644);                                                   //创建缓冲区,用于私聊暂存数据
+            mkdir("Friends",0755);
+            mkdir("File",0755);
             user.consumer.result = 0;
             while(ret != sizeof(struct node_server))
                 ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去

@@ -23,9 +23,32 @@ void friend_managment(int conn_fd,struct node_server user)
     char pwd[200];                                           //获取绝对路径
     char str_name[30]; 
     char str_path[100];                                            //保存目标姓名
+
     switch(user.my_firend.choice_friend)
     {
         case 1:                                                    //进行私聊的情况
+            temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+            strcpy(user.consumer.username,temp->name);             //填上发消息的人的信息
+            temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
+            if(temp == NULL)
+            {
+                printf("离线模式\n");
+                /*strcpy(pwd,str);                                   //information
+                strcat(pwd,user.my_firend.friends_name);           //目标用户目录
+                strcat(pwd,"/Friends/");
+                strcat(pwd,temp->name);
+                strcat(pwd,"/buffer");
+                printf("%s\n",pwd);
+                fp = fopen(pwd,"a+");
+                fprintf(fp,"%s %s %s\n",temp->name,user.my_firend.friends_name,user.my_firend.friend_message);
+                fclose(fp);
+                fp = fopen("/home/Crow/Public/buffer","a+");
+                fprintf(fp,"%s\n",user.my_firend.friends_name);
+                fclose(fp);*/
+                break;
+            }
+            else
+                send(temp->conn_fd,&user,sizeof(struct node_server),0);     //发送给目标好友
             break;
         case 2:                                                    //进行添加好友选项
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);
@@ -45,7 +68,18 @@ void friend_managment(int conn_fd,struct node_server user)
                 printf("对方已经同意添加好友的请求\n");
                 char str1[200],str2[200];
                 strcpy(str1,str);
-                strcat(str1,user.consumer.username);
+                strcat(str1,user.consumer.username);                      //最后不需要回上级目录,因为并为改变str1
+                chdir(str1);
+                strcpy(pwd,str1);
+                strcat(pwd,"/Friends"); 
+                chdir(pwd);                                  //进入好友类目录
+                mkdir(user.my_firend.friends_name,0755);
+                strcpy(pwd,str1);
+                strcat(pwd,"/Friends/");
+                strcat(pwd,user.my_firend.friends_name);
+                chdir(pwd);
+                creat("buffer",0644);
+                creat("history",0644);
                 strcat(str1,"/friends_list");
                 printf("%s\n",str1);
                 fp = fopen(str1,"a+");
@@ -55,6 +89,17 @@ void friend_managment(int conn_fd,struct node_server user)
                 fclose(fp);
                 strcpy(str2,str);
                 strcat(str2,user.my_firend.friends_name);
+                chdir(str2);
+                strcpy(pwd,str2);
+                strcat(pwd,"/Friends");
+                chdir(pwd);
+                mkdir(user.consumer.username,0755);
+                strcpy(pwd,str2);
+                strcat(pwd,"/Friends/");                                      //十分关键的一步,不然路径无效
+                strcat(pwd,user.consumer.username);
+                chdir(pwd);
+                creat("buffer",0644);
+                creat("history",0644);
                 strcat(str2,"/friends_list");
                 fp = fopen(str2,"a+");
                 if(fp == NULL)

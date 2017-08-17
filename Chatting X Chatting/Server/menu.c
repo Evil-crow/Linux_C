@@ -29,7 +29,8 @@ void menu(int conn_fd)
     struct node_server user;                   //进行接受的结构体
     int ret;                                   //处理返回值
     list *temp;
-    //memset(&user,0,sizeof(user));            //如若置空,以后多次交互不好取出信息    
+    //memset(&user,0,sizeof(user));            //如若置空,以后多次交互不好取出信息 
+       
     ret = recv(conn_fd,&user,sizeof(struct node_server),0);
   
     if(ret <= 0)

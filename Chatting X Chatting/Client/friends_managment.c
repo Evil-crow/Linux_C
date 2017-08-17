@@ -3,13 +3,50 @@
 #include<string.h>
 #include<sys/socket.h>
 #include"struct_node_client.h"
+
+extern int chat_status;                                        //表示是否处于私聊的状态 
+
 void chatting_with_friend(int sock_fd)
 {
     char ch;                                                   //实现按任意键退出
     struct node_client user;                                   //进行处理的结构体
+    FILE *fp;                                                  //处理buffer文件
+    char _message[50];
+    char _name[30];
+    char _date[20];
+    char _time[20];
 
     user.flag = 2;                                             //表示进行好友项目的操作
     user.my_firend.choice_friend = 1;                          //表示进行私聊
+    printf("请选择你要进行聊天的好友:");
+    scanf("%s",user.my_firend.friends_name);                  //录入聊天好友
+    printf("开始聊天:\n");
+    chat_status = 1;                                           //表示进入私聊
+    fp = fopen("/home/Crow/Public/buffer","r+");
+    if((ch = fgetc(fp)) != EOF)                                //如果不为空
+    {
+        fseek(fp,0L,0);                                        //文件指针回到起始
+        while(!feof(fp))                                       //当文件指针不指向结尾时
+        {
+            fscanf(fp,"%s %s %s %s\n",_date,_time,_name,_message);
+            printf("date:%s %s\n %s : %s\n",_date,_time,_name,_message);        //打印消息
+        }
+    }
+    fclose(fp);
+    fp = fopen("/home/Crow/Public/buffer","w+");
+    fclose(fp);                                                 //重置缓冲文件
+    scanf("%s",user.my_firend.friend_message);                 //录入短消息
+    send(sock_fd,&user,sizeof(struct node_client),0);
+    while(strcmp(user.my_firend.friend_message,"quit") != 0)
+    {
+        scanf("%s",user.my_firend.friend_message);
+        send(sock_fd,&user,sizeof(struct node_client),0);
+    }
+    printf("私聊结束\n");
+    chat_status = 0;
+    getchar( );
+    while((ch = getchar( )) == '\n')
+    return ;                                                    //退出聊天界面
 }
 
 void add_new_friend(int sock_fd)
