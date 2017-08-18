@@ -13,4 +13,6 @@ void del_friend(int sock_fd);                                   //删除好友
 
 void display_friend_status(int sock_fd);                        //显示好友状态
 
+void view_chat_log(int scok_fd);                                //查看聊天记录
+
 #endif

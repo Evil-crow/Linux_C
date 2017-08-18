@@ -19,7 +19,8 @@ int judge(FILE*fp);                                                   //判断�
 
 void sign_register(int conn_fd,struct node_server user)
 {
-    FILE *fp;                                                         //文件指针
+    FILE *fp;
+    FILE *sp;                                                         //文件指针
     int   ret;
     char username[MAX_STR];
     char password[MAX_STR];
@@ -42,7 +43,6 @@ void sign_register(int conn_fd,struct node_server user)
                         if(strcmp(password,user.consumer.passwd1) == 0)
                         {
                             user.consumer.result = 0;              //用户名,密码完全匹配.登录成功
-                            FILE *sp;
                             char str[200];
                             strcpy(str,get_time( ));
                             sp = fopen("/home/Crow/Public/Information/server_log","a+");
@@ -50,6 +50,28 @@ void sign_register(int conn_fd,struct node_server user)
                             fclose(sp);
                             pHead = linkedlist_add(pHead,conn_fd,user.consumer.username);
                             /*将登录成功的用户,添加进入链表中*/
+                            while(ret != sizeof(struct node_server))
+                                ret = send(conn_fd,&user,sizeof(struct node_server),0);
+                            fp = fopen("/home/Crow/Public/buffer2","r+");
+                            if(!judge(fp))
+                            return ;                                             //若路径文件为空,则直接返回
+                            fscanf(fp,"%s\n",pwd);
+                            fclose(fp);
+                            fp = fopen("/home/Crow/Public/buffer2","w+");
+                            fclose(fp);                                           //清空缓冲区
+                            fp = fopen(pwd,"r+");
+                            while(!feof(fp))
+                            {
+                                sleep(1);
+                                user.flag = 2;
+                                user.my_firend.choice_friend = 1;                //离线期间的私聊消息
+                                fscanf(fp,"%s %s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
+                                /*填好信息,并发送*/
+                                send(conn_fd,&user,sizeof(struct node_server),0);
+                            }
+                            fclose(fp);
+                            fp  = fopen(pwd,"w+");
+                            fclose(fp);                                           //清空缓冲区
                             return ;
                         }
                         user.consumer.result = 3;                  //登录时.密码错误
@@ -109,7 +131,8 @@ int judge(FILE *fp)
     if(fgetc(fp) == EOF)
     {
         fseek(fp,0L,0);                                        //重新回到文件头
-        return 0;
+        return 0;                                              //空文件
     }
-    return 1;
+    fseek(fp,0L,0);
+    return 1;                                                  //非空文件
 }

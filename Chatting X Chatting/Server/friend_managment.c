@@ -29,22 +29,47 @@ void friend_managment(int conn_fd,struct node_server user)
         case 1:                                                    //进行私聊的情况
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);
             strcpy(user.consumer.username,temp->name);             //填上发消息的人的信息
+
+            /*将消息,写入历史记录*/
+            strcpy(pwd,str);
+            strcat(pwd,user.consumer.username);
+            strcat(pwd,"/Friends/");
+            strcat(pwd,user.my_firend.friends_name);
+            strcat(pwd,"/history");
+            printf("%s\n",pwd);
+            fp = fopen(pwd,"a+");
+            fprintf(fp,"%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
+            fclose(fp);
+            strcpy(pwd,str);
+            strcat(pwd,user.my_firend.friends_name);
+            strcat(pwd,"/Friends/");
+            strcat(pwd,user.consumer.username);
+            strcat(pwd,"/history");
+            printf("%s\n",pwd);
+            fp = fopen(pwd,"a+");
+            fprintf(fp,"%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
+            fclose(fp);
+            /*消息写入历史记录完成*/
             temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
             if(temp == NULL)
             {
                 printf("离线模式\n");
-                /*strcpy(pwd,str);                                   //information
+                strcpy(pwd,str);                                   //information
+                printf("%s\n",pwd);
                 strcat(pwd,user.my_firend.friends_name);           //目标用户目录
+                printf("%s\n",pwd);
                 strcat(pwd,"/Friends/");
-                strcat(pwd,temp->name);
+                printf("%s\n",pwd);
+                strcat(pwd,user.consumer.username);
+                printf("%s\n",pwd);
                 strcat(pwd,"/buffer");
                 printf("%s\n",pwd);
                 fp = fopen(pwd,"a+");
-                fprintf(fp,"%s %s %s\n",temp->name,user.my_firend.friends_name,user.my_firend.friend_message);
+                fprintf(fp,"%s %s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
                 fclose(fp);
-                fp = fopen("/home/Crow/Public/buffer","a+");
-                fprintf(fp,"%s\n",user.my_firend.friends_name);
-                fclose(fp);*/
+                fp = fopen("/home/Crow/Public/buffer2","a+");
+                fprintf(fp,"%s\n",pwd);
+                fclose(fp);
                 break;
             }
             else
@@ -194,6 +219,27 @@ void friend_managment(int conn_fd,struct node_server user)
             }
             fclose(fp);
             printf("好友状态判断完成\n");
+            break;
+        case 7:
+            temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+            strcpy(user.consumer.username,temp->name);
+            strcpy(pwd,str);
+            strcat(pwd,user.consumer.username);
+            strcat(pwd,"/Friends/");
+            strcat(pwd,user.my_firend.friends_name);
+            strcat(pwd,"/history");
+            fp = fopen(pwd,"r+");
+            if((ch = fgetc(fp) == EOF))
+            {
+                strcpy(user.my_firend.friend_message,"暂无历史记录,快去发起聊天吧!");
+                send(conn_fd,&user,sizeof(struct node_server),0);
+                return ;
+            }
+            while(!feof(fp))
+            {
+                fscanf(fp,"%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
+                send(conn_fd,&user,sizeof(struct node_server),0);
+            }
             break;
     }
 }

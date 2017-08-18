@@ -18,6 +18,7 @@ struct friend_
     int                         friends_status;                     //表示好友状态,0/离线,1/在线
     char                        friends_name[MAX_STR];              //想要进行处理的好友姓名
     char                        friend_message[MAX_MESSAGE];        //要发送的消息
+    char                        date_time[80];                       //发送消息的日期时间
 };
 struct group
 {

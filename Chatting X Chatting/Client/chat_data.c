@@ -67,7 +67,8 @@ void friends_managment(int sock_fd)
         printf("\t\t\t\t                          3.好友列表                                \n\n\n");
         printf("\t\t\t\t                          4.删除好友                                \n\n\n");
         printf("\t\t\t\t                          5.好友状态                                \n\n\n");
-        printf("\t\t\t\t                          0.返回主菜单                              \n\n\n");
+        printf("\t\t\t\t                          6.查看聊天记录                             \n\n\n");
+        printf("\t\t\t\t                          0.返回主菜单                               \n\n\n");
         printf("\t\t\t\t===================================================================\n");
         scanf("%d",&choice);
         switch(choice)
@@ -87,6 +88,8 @@ void friends_managment(int sock_fd)
             case 5:
                 display_friend_status(sock_fd);
                 break;
+            case 6:
+                view_chat_log(sock_fd);
             case 0:                                                       //返回主菜单
                 return ;
         }
