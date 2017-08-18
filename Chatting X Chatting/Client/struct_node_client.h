@@ -27,6 +27,7 @@ struct group
     char                        group_name[MAX_STR];                //群组名
     char                        member_name[MAX_STR];               //群成员
     int                         group_result;                       //进行操作的结果,也可以表示状态
+    char                        date_time[80];                      //发送消息的时间日期
 };
 struct node_client
 {

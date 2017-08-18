@@ -113,7 +113,19 @@ void _recv(int sock_fd)
             case 3:                                                                   //表示进行群组的操作
                 switch(recv_user.my_group.choice_group)
                 {
-                    case 1:                                                             //表示群聊
+                    case 1:                                                             //表示群聊/
+                        if(chat_status == 1)
+                        {
+                            printf("%s%s:%s\n",recv_user.my_group.date_time,recv_user.my_group.member_name,recv_user.my_group.group_message);
+                        }
+                        if(chat_status == 0)
+                        {
+                            printf("群组:%s发来消息\n",recv_user.my_group.group_name);
+                            sleep(1);
+                            fp = fopen("/home/Crow/Public/buffer1","a+");
+                            fprintf(fp,"%s\n%s %s\n",recv_user.my_group.date_time,recv_user.my_group.member_name,recv_user.my_group.group_message);
+                            fclose(fp);
+                        }
                         break;
                     case 2: 
                         printf("result:%d\n",recv_user.my_group.group_result);                                                            //表示创建群组

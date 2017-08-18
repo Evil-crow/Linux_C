@@ -120,7 +120,7 @@ void groups_managment(int sock_fd)
         switch(choice)
         {
             case 1:                                                         //发起群聊函数
-                //chatting_with_group(sock_fd);
+                chatting_with_group(sock_fd);
                 break;
             case 2:                                                         //创建群组
                 create_new_group(sock_fd);

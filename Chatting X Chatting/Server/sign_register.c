@@ -23,6 +23,7 @@ void sign_register(int conn_fd,struct node_server user)
     FILE *sp;                                                         //文件指针
     int   ret;
     list *temp;
+    char ch;
     char username[MAX_STR];
     char password[MAX_STR];
     char pwd[200];
@@ -46,11 +47,9 @@ void sign_register(int conn_fd,struct node_server user)
                             temp = linkedlist_seek_username(pHead,user.consumer.username);
                             if(temp != NULL)
                             {
-                                user.flag = 1;
-                                user.consumer.choice_sign = 1;
                                 user.consumer.result = 1;
-                                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
-                                return;
+                                send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                                return ;
                             }
                             user.consumer.result = 0;              //用户名,密码完全匹配.登录成功
                             char str[200];
@@ -82,6 +81,18 @@ void sign_register(int conn_fd,struct node_server user)
                             fclose(fp);
                             fp  = fopen(pwd,"w+");
                             fclose(fp);                                           //清空缓冲区
+                            /*fp = fopen(user.consumer.username,"r+");
+                            if((ch = fgetc(fp)) != EOF)
+                            {
+                                while(!feof(fp))
+                                {
+                                    user.flag = 3;user.my_group.choice_group = 1;
+                                    fscanf(fp,"%s %s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_name,user.my_group.group_message);    
+                                    send(temp->conn_fd,&user,sizeof(struct node_server),0);
+                                }
+                            }
+                            fclose(fp);
+                            remove(temp->name);*/
                             return ;
                         }
                         user.consumer.result = 3;                  //登录时.密码错误
@@ -93,12 +104,12 @@ void sign_register(int conn_fd,struct node_server user)
                 user.consumer.result = 2;                          //遍历完成,没有该用户名
                 while(ret != sizeof(struct node_server))
                     ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
-                return ;
+                return;
             }
             user.consumer.result = 2;                              //文件为空,用户名不存在
             while(ret != sizeof(struct node_server))
                 ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
-            return ;
+            return;
         case 2:                                                  //进行注册选项
             if(judge(fp))
             {
@@ -111,7 +122,7 @@ void sign_register(int conn_fd,struct node_server user)
                         user.consumer.result = 1;
                         while(ret != sizeof(struct node_server))
                             ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
-                        return ;
+                        return;
                     }      
                 }
             }
@@ -129,7 +140,7 @@ void sign_register(int conn_fd,struct node_server user)
             user.consumer.result = 0;
             while(ret != sizeof(struct node_server))
                 ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
-            return ;
+            return;
     }
     /*在switch-case语句之后,进行sign数据包的回馈*/
     

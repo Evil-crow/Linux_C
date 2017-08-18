@@ -21,10 +21,37 @@ void group_managment(int conn_fd,struct node_server user)
     char str[200] = "/home/Crow/Public/Information/";
     char pwd[200];                             //获取路径的字符串
     char group[30];                            //暂存内容
+    int temp_fd;                                //中介套套接字
 
     switch(user.my_group.choice_group)
     {
         case 1:                                //进行群聊
+            temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+            strcpy(user.my_group.member_name,temp->name);                       //涌入==存入发消息人的姓名
+            strcpy(pwd,str);
+            strcat(pwd,"Groups/");
+            strcat(pwd,user.my_group.group_name);
+            strcat(pwd,"/members");
+            printf("%s\n",pwd);
+            fp = fopen(pwd,"r+");
+            
+                while(!feof(fp))
+                {
+                    fscanf(fp,"%s\n",group);
+                    temp = linkedlist_seek_username(pHead,group);
+                    if(temp->conn_fd == conn_fd)
+                    continue;
+                    /*if(temp == NULL)
+                    {
+                        /*如果离线,则写入指定名称的文件中,使用链表获取用户户名直接读*/
+                        //sp = fopen(temp->name,"a+");
+                        //fprintf(sp,"%s %s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_name,user.my_group.group_message);
+                        //fclose(sp);
+                    //}
+                    temp_fd = temp->conn_fd;
+                    send(temp_fd,&user,sizeof(struct node_server),0);       //发送给所有在线群组成员
+                }
+                fclose(fp);
             break;
         case 2:                                //创建群组
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);
@@ -59,7 +86,8 @@ void group_managment(int conn_fd,struct node_server user)
             mkdir(pwd,0755);                        //创建群组的目录
             chdir(pwd);                             //进入到新创建的该目录
             creat("buffer",0644);
-            creat("members",0644);                  //创建两个目录下的子文件
+            creat("history",0644);
+            creat("members",0644);                  //创建3个目录下的子文件
             strcat(pwd,"/members");
             fp = fopen(pwd,"a+");
             fprintf(fp,"%s\n",user.my_group.member_name);
