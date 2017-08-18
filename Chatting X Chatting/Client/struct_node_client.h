@@ -24,7 +24,9 @@ struct group
 {
     int                         choice_group;                       //进行群聊操作选择
     char                        group_message[MAX_MESSAGE];         //发送群聊消息
-    char                        group_name;                         //群组名
+    char                        group_name[MAX_STR];                //群组名
+    char                        member_name[MAX_STR];               //群成员
+    int                         group_result;                       //进行操作的结果,也可以表示状态
 };
 struct node_client
 {

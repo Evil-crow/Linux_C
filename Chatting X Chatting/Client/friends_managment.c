@@ -9,6 +9,7 @@ extern int chat_status;                                        //表示是否处
 extern char *get_time(void);
 
 extern void change(char *str);                                      //进行时间内容的转换
+
 void chatting_with_friend(int sock_fd)
 {
     char ch;                                                   //实现按任意键退出
@@ -67,7 +68,6 @@ void add_new_friend(int sock_fd)
     
     user.flag = 2;                                             //进行好友相关操作
     user.my_firend.choice_friend = 2;                          //表示添加好友操作
-    system("clear");
     printf("请输入要添加的好友姓名:\n");
     scanf("%s",user.my_firend.friends_name);                   //存储要添加的好友姓名
     printf("准备发送中!\n");

@@ -1,5 +1,5 @@
-Client : main.o _recv.o sign_in.o sock_fd_create.o chat_data.o friends_managment.o view_box.o
-	gcc main.o _recv.o sign_in.o sock_fd_create.o chat_data.o friends_managment.o view_box.o -o Client -lpthread  
+Client : main.o _recv.o sign_in.o sock_fd_create.o chat_data.o friends_managment.o view_box.o groups_managment.o
+	gcc main.o _recv.o sign_in.o sock_fd_create.o chat_data.o friends_managment.o view_box.o groups_managment.o -o Client -lpthread  
 main.o : main.c main.h 
 	gcc -c main.c main.h  
 _recv.o : _recv.c main.h 
@@ -14,6 +14,8 @@ friends_managment.o : friends_managment.c struct_node_client.h
 	gcc -c friends_managment.c struct_node_client.h
 view_box.o : view_box.c struct_node_client.h chat_data.h
 	gcc -c view_box.c struct_node_client.h chat_data.h 
+groups_managment.o : groups_managment.c struct_node_client.h
+	gcc -c groups_managment.c struct_node_client.h
 clean : 
 	rm -rf *.o
 	rm -rf *.gch

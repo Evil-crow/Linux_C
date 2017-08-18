@@ -76,6 +76,7 @@ void _recv(int sock_fd)
                         else                                   //表示用户不在聊天界面
                         {
                             printf("您收到%s发来的消息,请及时查看!\n",recv_user.consumer.username);
+                            sleep(1);
                             fp = fopen("/home/Crow/Public/buffer1","a+");      //追加信息
                             fprintf(fp,"%s\n%s %s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
                             fclose(fp);                        //写完关闭文件
@@ -109,6 +110,53 @@ void _recv(int sock_fd)
                         printf("%s %s %s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
                         break;
                 }
+            case 3:                                                                   //表示进行群组的操作
+                switch(recv_user.my_group.choice_group)
+                {
+                    case 1:                                                             //表示群聊
+                        break;
+                    case 2: 
+                        printf("result:%d\n",recv_user.my_group.group_result);                                                            //表示创建群组
+                        if(recv_user.my_group.group_result == 0)
+                        {
+                            printf("创建群组失败,下次起个diao-diao的名字哟!\n");
+                            break;
+                        }
+                        if(recv_user.my_group.group_result == 1)
+                        {
+                            printf("创建群组成功!,快开车啊!\n");
+                            break;
+                        }
+                    case 3:                                                                //表示是加入群组的请求 
+                        if(recv_user.my_group.group_result == 0)
+                        {
+                            printf("你已经添加过该群组,请重新检查!\n");
+                            break;
+                        }
+                        if(recv_user.my_group.group_result == 1)
+                        {
+                            printf("小姊姊,我进来了!快出来玩啊!\n");
+                            break;
+                        }
+                    case 4: 
+                        printf("%s\n",recv_user.my_group.member_name);
+                        break;
+                    case 5:                                                      //显示群成员状态的操作
+                        if(recv_user.my_group.group_result == 1)
+                        printf("\033[01;32m %s\033[0m\n",recv_user.my_group.member_name);
+                        else
+                        printf("\033[01;31m %s\033[0m\n",recv_user.my_group.member_name);
+                    case 6: 
+                        break;
+                    case 7: 
+                        printf("%s\n",recv_user.my_group.group_name);
+                        break;
+                    case 8:
+                        printf("%s\n",recv_user.my_group.group_message);
+                        break;
+                }
+
+                
 
         }
     }

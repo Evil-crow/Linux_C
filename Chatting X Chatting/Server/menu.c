@@ -16,6 +16,9 @@ struct epoll_event epoll_ev;            //epoll_event类型结构体,用于注�
 void sign_register(int sock_fd,struct node_server user);
 
 void friend_managment(int conn_fd,struct node_server user);
+
+void group_managment(int conn_fd,struct node_server user);
+
 extern int epoll_fd;                       //在epoll_server中定义,此处为引用
 
 extern void _error(const char *string,int line);
@@ -72,7 +75,7 @@ void menu(int conn_fd)
                 friend_managment(conn_fd,user);           //进行数据操作通信的函数
                 break;
             case 3:
-                //group_managment(conn_fd,user);            //进行聊天群的处理
+                group_managment(conn_fd,user);            //进行聊天群的处理
                 break;
         }
     }
