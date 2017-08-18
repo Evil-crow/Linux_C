@@ -8,12 +8,14 @@ extern int chat_status;                                        //表示是否处
 
 extern char *get_time(void);
 
+extern void change(char *str);                                      //进行时间内容的转换
 void chatting_with_friend(int sock_fd)
 {
     char ch;                                                   //实现按任意键退出
     struct node_client user;                                   //进行处理的结构体
     FILE *fp;                                                  //处理buffer文件
     char _message[50];
+    char _name[30];
     char date_time[80];
 
     user.flag = 2;                                             //表示进行好友项目的操作
@@ -28,8 +30,8 @@ void chatting_with_friend(int sock_fd)
         fseek(fp,0L,0);                                        //文件指针回到起始
         while(!feof(fp))                                       //当文件指针不指向结尾时
         {
-            fscanf(fp,"%s %s\n",date_time,_message);
-            printf("%s %s\n",date_time,_message);        //打印消息
+            fscanf(fp,"%s\n %s %s\n",date_time,_name,_message);
+            printf("%s\n %s %s\n",date_time,_name,_message);        //打印消息
         }
     }
     fclose(fp);
@@ -42,6 +44,7 @@ void chatting_with_friend(int sock_fd)
        if(strcmp(_message,"quit") != 0)
        {
            strcpy(date_time,get_time( ));
+           change(date_time);
            strcpy(user.my_firend.date_time,date_time);          //保存时间信息
   
            strcpy(user.my_firend.friend_message,_message);

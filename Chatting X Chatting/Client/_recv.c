@@ -71,13 +71,13 @@ void _recv(int sock_fd)
                         /*私聊收到的消息,分为用户在私聊界面,和不在私聊界面的情况*/
                         if(chat_status == 1)                   //表示在私聊界面
                         {
-                            printf("%s %s\n",recv_user.my_firend.date_time,recv_user.my_firend.friend_message);
+                            printf("%s\n%s %s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
                         }
-                        else                                   //表示用户不再聊天界面
+                        else                                   //表示用户不在聊天界面
                         {
                             printf("您收到%s发来的消息,请及时查看!\n",recv_user.consumer.username);
                             fp = fopen("/home/Crow/Public/buffer1","a+");      //追加信息
-                            fprintf(fp,"%s %s\n",recv_user.my_firend.date_time,recv_user.my_firend.friend_message);
+                            fprintf(fp,"%s\n%s %s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
                             fclose(fp);                        //写完关闭文件
                         }
                         break;

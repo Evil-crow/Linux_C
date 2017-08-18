@@ -22,6 +22,7 @@ void sign_register(int conn_fd,struct node_server user)
     FILE *fp;
     FILE *sp;                                                         //文件指针
     int   ret;
+    list *temp;
     char username[MAX_STR];
     char password[MAX_STR];
     char pwd[200];
@@ -42,6 +43,15 @@ void sign_register(int conn_fd,struct node_server user)
                     {
                         if(strcmp(password,user.consumer.passwd1) == 0)
                         {
+                            temp = linkedlist_seek_username(pHead,user.consumer.username);
+                            if(temp != NULL)
+                            {
+                                user.flag = 1;
+                                user.consumer.choice_sign = 1;
+                                user.consumer.result = 1;
+                                ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
+                                return;
+                            }
                             user.consumer.result = 0;              //用户名,密码完全匹配.登录成功
                             char str[200];
                             strcpy(str,get_time( ));
@@ -65,7 +75,7 @@ void sign_register(int conn_fd,struct node_server user)
                                 sleep(1);
                                 user.flag = 2;
                                 user.my_firend.choice_friend = 1;                //离线期间的私聊消息
-                                fscanf(fp,"%s %s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
+                                fscanf(fp,"%s\n%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
                                 /*填好信息,并发送*/
                                 send(conn_fd,&user,sizeof(struct node_server),0);
                             }

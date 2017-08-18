@@ -12,6 +12,8 @@ list *pHead;                                //全局链表头节点
 
 void _error(const char *string,int line);
 
+void change(char *str);                     //进行时间日期格式转换的函数
+
 char *get_time(void);                       //获取时间的函数
 
 int main(int argc,char **argv)
@@ -44,3 +46,4 @@ char *get_time(void)
     time(&timenow);
     return ctime(&timenow);
 }
+

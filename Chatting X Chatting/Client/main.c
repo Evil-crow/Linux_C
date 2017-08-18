@@ -3,6 +3,7 @@
 #include<unistd.h>
 #include<signal.h>
 #include<pthread.h>
+#include<string.h>
 #include<time.h>
 #include"main.h"
 #include"struct_node_client.h"
@@ -10,6 +11,8 @@
 int chat_status = 0;              //不进入私聊前,置为0                      //定义全局标识位,用于标识,是否处于私聊状态 
 
 char *get_time(void);
+
+void change(char *str);
 
 extern struct node_client recv_user;                                     //用于判定登录/注册情况,直接退出
 
@@ -56,4 +59,15 @@ char *get_time(void)
     time_t timenow;
     time(&timenow);
     return ctime(&timenow);
+}
+
+void change(char *str)
+{
+    int i;
+    str[strlen(str)] = '\0';
+    for(i  =0;str[i] != '\0';i++)
+    {
+        if(str[i] == ' ')
+        str[i] = '-';
+    }
 }

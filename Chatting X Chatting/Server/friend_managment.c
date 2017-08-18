@@ -38,7 +38,7 @@ void friend_managment(int conn_fd,struct node_server user)
             strcat(pwd,"/history");
             printf("%s\n",pwd);
             fp = fopen(pwd,"a+");
-            fprintf(fp,"%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
+            fprintf(fp,"%s\n%s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
             fclose(fp);
             strcpy(pwd,str);
             strcat(pwd,user.my_firend.friends_name);
@@ -47,7 +47,7 @@ void friend_managment(int conn_fd,struct node_server user)
             strcat(pwd,"/history");
             printf("%s\n",pwd);
             fp = fopen(pwd,"a+");
-            fprintf(fp,"%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
+            fprintf(fp,"%s\n%s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friend_message);
             fclose(fp);
             /*消息写入历史记录完成*/
             temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
@@ -65,7 +65,7 @@ void friend_managment(int conn_fd,struct node_server user)
                 strcat(pwd,"/buffer");
                 printf("%s\n",pwd);
                 fp = fopen(pwd,"a+");
-                fprintf(fp,"%s %s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
+                fprintf(fp,"%s\n%s %s %s\n",user.my_firend.date_time,user.consumer.username,user.my_firend.friends_name,user.my_firend.friend_message);
                 fclose(fp);
                 fp = fopen("/home/Crow/Public/buffer2","a+");
                 fprintf(fp,"%s\n",pwd);
