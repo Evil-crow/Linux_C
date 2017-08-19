@@ -107,7 +107,13 @@ void _recv(int sock_fd)
                         }
                         break;
                     case 7:
-                        printf("%s %s %s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
+                        printf("%s %s:%s\n",recv_user.my_firend.date_time,recv_user.consumer.username,recv_user.my_firend.friend_message);
+                        break;
+                    case 8: 
+                        if(recv_user.my_firend.friends_status == 0)           //下线提醒
+                        printf("您的好友:%s已下线",recv_user.my_firend.friends_name);
+                        else 
+                        printf("您的好友:%s已上线\n",recv_user.my_firend.friends_name);
                         break;
                 }
             case 3:                                                                   //表示进行群组的操作
@@ -158,7 +164,12 @@ void _recv(int sock_fd)
                         printf("\033[01;32m %s\033[0m\n",recv_user.my_group.member_name);
                         else
                         printf("\033[01;31m %s\033[0m\n",recv_user.my_group.member_name);
-                    case 6: 
+                        break;
+                    case 6:                                                      //表示查看历史消息
+                        if(strcmp(recv_user.my_group.date_time,"zero") != 0)
+                        printf("%s %s:%s\n",recv_user.my_group.date_time,recv_user.my_group.member_name,recv_user.my_group.group_message); 
+                        else
+                        printf("%s\n",recv_user.my_group.group_message);
                         break;
                     case 7: 
                         printf("%s\n",recv_user.my_group.group_name);

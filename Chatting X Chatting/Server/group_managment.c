@@ -14,6 +14,7 @@ extern void _error(const char *string,int line);                        //自定
 
 void group_managment(int conn_fd,struct node_server user)
 {
+    int ret;
     list *temp;                                //在链表中寻找数据
     char ch;                                   //判断文件是否为空的情况
 
@@ -27,7 +28,14 @@ void group_managment(int conn_fd,struct node_server user)
     {
         case 1:                                //进行群聊
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);
-            strcpy(user.my_group.member_name,temp->name);                       //涌入==存入发消息人的姓名
+            strcpy(user.my_group.member_name,temp->name);                       //存入发消息人的姓名
+            strcpy(pwd,str);
+            strcat(pwd,"Groups/");
+            strcat(pwd,user.my_group.group_name);
+            strcat(pwd,"/history");
+            fp = fopen(pwd,"a+");
+            fprintf(fp,"%s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_message);
+            fclose(fp);
             strcpy(pwd,str);
             strcat(pwd,"Groups/");
             strcat(pwd,user.my_group.group_name);
@@ -35,23 +43,27 @@ void group_managment(int conn_fd,struct node_server user)
             printf("%s\n",pwd);
             fp = fopen(pwd,"r+");
             
-                while(!feof(fp))
+            while(!feof(fp))
+            {
+                fscanf(fp,"%s\n",group);
+                printf("%s\n",group);                                         //打印群组成员
+                temp = linkedlist_seek_username(pHead,group);
+                if(temp == NULL)
                 {
-                    fscanf(fp,"%s\n",group);
-                    temp = linkedlist_seek_username(pHead,group);
-                    if(temp->conn_fd == conn_fd)
+                    /*如果离线,则写入指定名称的文件中,使用链表获取用户户名直接读*/
+                    sp = fopen(group,"a+");
+                    fprintf(sp,"%s %s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_name,user.my_group.group_message);
+                    fclose(sp);
                     continue;
-                    /*if(temp == NULL)
-                    {
-                        /*如果离线,则写入指定名称的文件中,使用链表获取用户户名直接读*/
-                        //sp = fopen(temp->name,"a+");
-                        //fprintf(sp,"%s %s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_name,user.my_group.group_message);
-                        //fclose(sp);
-                    //}
-                    temp_fd = temp->conn_fd;
-                    send(temp_fd,&user,sizeof(struct node_server),0);       //发送给所有在线群组成员
                 }
-                fclose(fp);
+                if(temp->conn_fd == conn_fd)
+                continue;
+                printf("conn_fd:%d,temp->conn_fd:%d\n",conn_fd,temp->conn_fd);    //打印套接字
+                printf("group: %s\n",group);                       //打印对应的成员
+                temp_fd = temp->conn_fd;
+                send(temp_fd,&user,sizeof(struct node_server),0);       //发送给所有在线群组成员
+            }
+            fclose(fp);
             break;
         case 2:                                //创建群组
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);
@@ -85,7 +97,6 @@ void group_managment(int conn_fd,struct node_server user)
             printf("%s\n",pwd);
             mkdir(pwd,0755);                        //创建群组的目录
             chdir(pwd);                             //进入到新创建的该目录
-            creat("buffer",0644);
             creat("history",0644);
             creat("members",0644);                  //创建3个目录下的子文件
             strcat(pwd,"/members");
@@ -181,12 +192,33 @@ void group_managment(int conn_fd,struct node_server user)
                     user.my_group.group_result = 1;
                     send(conn_fd,&user,sizeof(struct node_server),0);
                 }
-                return ;
+                break;
             }
             strcpy(user.my_group.member_name,"该群组还没有成员哟!");
             send(conn_fd,&user,sizeof(struct node_server),0);
             break;
-        case 6: 
+        case 6:
+            temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+            strcpy(user.my_group.member_name,temp->name);
+            strcpy(pwd,str);
+            strcat(pwd,"Groups/");
+            strcat(pwd,user.my_group.group_name);
+            strcat(pwd,"/history");
+            printf("%s\n",pwd);
+            fp = fopen(pwd,"r+");
+            if((ch = fgetc(fp)) == EOF)
+            {
+                strcpy(user.my_group.date_time,"zero");
+                strcpy(user.my_group.group_message,"暂无历史记录,快去寻找邂逅吧!");
+                send(conn_fd,&user,sizeof(struct node_server),0); 
+                break;
+            }
+            fseek(fp,0L,0);
+            while(!feof(fp))
+            {
+                fscanf(fp,"%s %s %s\n",user.my_group.date_time,user.my_group.member_name,user.my_group.group_message);
+                send(conn_fd,&user,sizeof(struct node_server),0);
+            }
             break;
         case 7:                                                              //显示所有加入群组的操作
             temp = linkedlist_seek_conn_fd(pHead,conn_fd);

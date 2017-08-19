@@ -19,6 +19,7 @@ struct friend_
     char                        friends_name[MAX_STR];              //想要进行处理的好友姓名
     char                        friend_message[MAX_MESSAGE];        //要发送的消息
     char                        date_time[80];                       //发送消息的日期时间
+    char                        log_in_out_message[20];              //上下线提醒
 };
 struct group
 {

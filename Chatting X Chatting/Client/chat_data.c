@@ -113,7 +113,7 @@ void groups_managment(int sock_fd)
         printf("\t\t\t\t                          6.查看聊天记录                                \n");
         printf("\t\t\t\t                          7.加入的群组列表                               \n");
         printf("\t\t\t\t                          8.退出群组                                    \n");
-        printf("\t\t\t\t                          0.返回上一级                                  \n");
+        printf("\t\t\t\t                          0.返回主菜单                                  \n");
         printf("\t\t\t\t=======================================================================\n");
         printf("请输入选项:");
         scanf("%d",&choice);
@@ -135,7 +135,7 @@ void groups_managment(int sock_fd)
                 display_member_status(sock_fd);
                 break;
             case 6:                                                         //聊天记录
-                //view_group_chat_log(sock_fd); 
+                view_group_chat_log(sock_fd); 
                 break;
             case 7:                                                         //加入的群组
                 display_joined_group(sock_fd);                             

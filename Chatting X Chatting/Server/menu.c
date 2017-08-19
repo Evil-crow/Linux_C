@@ -19,6 +19,8 @@ void friend_managment(int conn_fd,struct node_server user);
 
 void group_managment(int conn_fd,struct node_server user);
 
+//void log_out_message(struct node_server user,char *str,char *ptr);            //下线提醒
+
 extern int epoll_fd;                       //在epoll_server中定义,此处为引用
 
 extern void _error(const char *string,int line);
@@ -32,6 +34,8 @@ void menu(int conn_fd)
     struct node_server user;                   //进行接受的结构体
     int ret;                                   //处理返回值
     list *temp;
+    char str[30];
+    char ptr[30];
     //memset(&user,0,sizeof(user));            //如若置空,以后多次交互不好取出信息 
        
     ret = recv(conn_fd,&user,sizeof(struct node_server),0);
@@ -42,6 +46,12 @@ void menu(int conn_fd)
             _error("recv",__LINE__);
         if(ret == 0)                     //表示对方已经关闭连接
         {
+            /*temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+            strcpy(user.consumer.username,temp->name);
+            strcpy(str,"/home/Crow/Public/Information");
+            strcat(str,user.consumer.username);
+            strcat(str,"/friends_list");
+            log_out_message(user,str,user.consumer.username);*/
             if(pHead->next != NULL)
             {
                 temp = linkedlist_seek_conn_fd(pHead,conn_fd);
@@ -85,3 +95,28 @@ void menu(int conn_fd)
     ep_ev.events = EPOLLIN | EPOLLONESHOT;
     epoll_ctl(epoll_fd,EPOLL_CTL_MOD,conn_fd,&ep_ev);
 }
+
+/*不成熟的下线提醒*/
+/*void log_out_message(struct node_server user,char *str,char *ptr)    
+{
+    FILE *fp;
+    char ch;
+    list *temp;
+    char group[20];
+    fp = fopen(str,"r+");
+    if((ch = fgetc(fp)) != EOF)
+    {
+        fseek(fp,0L,0);
+        while(!feof(fp))
+        {
+            user.flag = 2;
+            user.my_firend.choice_friend = 8;
+            fscanf(fp,"%s\n",group);
+            temp = linkedlist_seek_username(pHead,group);
+            strcpy(user.my_firend.friends_name,ptr);
+            user.my_firend.friends_status = 0;
+            if(temp != NULL)
+            send(temp->conn_fd,&user,sizeof(struct node_server),0);
+        }
+    }
+}*/

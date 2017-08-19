@@ -138,6 +138,20 @@ void display_member_status(int sock_fd)
     return ;
 }
 
+void view_group_chat_log(int sock_fd)                                       //查看群消息
+{
+    int ch;
+    struct node_client user;
+    user.flag = 3;
+    user.my_group.choice_group = 6;                                        //表示查看群组历史记录
+
+    printf("请输入你想查看历史消息的群组名:");
+    scanf("%s",user.my_group.group_name);                                    //存入目标群组名
+    send(sock_fd,&user,sizeof(struct node_client),0);
+    getchar( );
+    if((ch = getchar( )) == '\n')
+    return ;                                                              //按任意键退出
+} 
 void display_joined_group(int sock_fd)
 {
     int ch;
