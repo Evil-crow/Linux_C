@@ -31,7 +31,7 @@ int main(int argc,char **argv)
         printf("\t\t\t\tError\n");
         exit(EXIT_SUCCESS);
     }
-    pthread_create(&thid,NULL,(void *)_recv,sock_fd);          //开线程一直处于recv状态,进行信息的获取
+    pthread_create(&thid,NULL,(void *)_recv,(void *)&sock_fd);          //开线程一直处于recv状态,进行信息的获取
     pthread_detach(thid);                                      //用于回收线程资源
     work(sock_fd);                                             //工作函数
     

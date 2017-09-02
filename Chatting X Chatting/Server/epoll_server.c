@@ -38,6 +38,7 @@ void epoll_server(int listen_fd)
     while(1)                                      //在永真循环中,一直用epoll管理
     {
         epoll_ret = epoll_wait(epoll_fd,evs,maxnum,-1);   //epoll_wait获取返回值
+        printf("epoll_ret = %d\n",epoll_ret);
         if(epoll_ret > 0)
 
         switch(epoll_ret)
@@ -78,7 +79,7 @@ void epoll_server(int listen_fd)
                             pthread_t thid;                        //线程ID
 
                             /*创建线程,并且传入连接套接字,进行处理*/
-                            pthread_create(&thid,NULL,(void *)menu,evs[i].data.fd);
+                            pthread_create(&thid,NULL,(void *)menu,(void *)&evs[i].data.fd);
 
                             pthread_detach(thid);                 //在线程外部调用,回收资源
                         }

@@ -7,9 +7,7 @@ void friends_managment(int sock_fd);
 
 void groups_managment(int scoka_fd);
 
-//void file_managment(int sock_fd);
-
-//void others(int sock_fd);
+void file_managment(int sock_fd);
 
 void view_box(int sock_fd);
 

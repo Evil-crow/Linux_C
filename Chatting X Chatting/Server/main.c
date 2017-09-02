@@ -27,7 +27,7 @@ int main(int argc,char **argv)
     fclose(fp);                                 //关闭文件
     pHead = linkedlist_init(pHead);             //进行链表的初始化
     listen_fd = listen_fd_create( );             //创建监听套接字
-    signal(SIGPIPE,SIG_IGN);                    //忽略客户端断开连接的情况,保证服务器的稳定性
+    //signal(SIGPIPE,SIG_IGN);                    //使用epoll,不能忽略此信号,忽略客户端断开连接的情况,保证服务器的稳定性
     epoll_server(listen_fd);                    //epoll+多线程
 
     return 0;

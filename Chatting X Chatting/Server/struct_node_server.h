@@ -19,6 +19,7 @@ struct friend_
     char                        friends_name[MAX_STR];              //想要发送消息的好友姓名
     char                        friend_message[MAX_MESSAGE];        //要发送的消息
     char                        date_time[80];                       //发送消息的日期时间
+    char                        log_in_out_message[20];              //上下线提醒
 };
 struct group
 {
@@ -29,6 +30,12 @@ struct group
     int                         group_result;                       //进行操作的结果
     char                        date_time[80];                      //发送消息的时间日期
 };
+struct file
+{
+    int                         file_len;                           //传输的文件长度
+    char                        file_name[MAX_STR];                 //传输的文件名
+    char                        file_data[200];                     //一次读取200字节的内容
+};
 struct node_server
 {
     int                          flag;                               //用于标记是用来进行登录注册还是进行其他操作 1为登录,2为friend,3为group
@@ -36,5 +43,6 @@ struct node_server
     struct sign                  consumer;                           //进行登录的结构体
     struct friend_               my_firend;                          //进行私聊的结构体
     struct group                 my_group;                           //进行群聊的结构体
+    struct file                 my_file;                            //进行文件传输的结构体
 };
 #endif

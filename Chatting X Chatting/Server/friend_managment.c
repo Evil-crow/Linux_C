@@ -103,10 +103,10 @@ void friend_managment(int conn_fd,struct node_server user)
                 strcat(pwd,"/Friends/");
                 strcat(pwd,user.my_firend.friends_name);
                 chdir(pwd);
+                printf("%s\n",pwd);
                 creat("buffer",0644);
                 creat("history",0644);
                 strcat(str1,"/friends_list");
-                printf("%s\n",str1);
                 fp = fopen(str1,"a+");
                 if(fp == NULL)
                     _error("fopen",__LINE__);
@@ -123,6 +123,7 @@ void friend_managment(int conn_fd,struct node_server user)
                 strcat(pwd,"/Friends/");                                      //十分关键的一步,不然路径无效
                 strcat(pwd,user.consumer.username);
                 chdir(pwd);
+                printf("%s\n",pwd);
                 creat("buffer",0644);
                 creat("history",0644);
                 strcat(str2,"/friends_list");

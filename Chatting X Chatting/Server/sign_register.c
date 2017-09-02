@@ -46,9 +46,11 @@ void sign_register(int conn_fd,struct node_server user)
                     fscanf(fp,"%s %s\n",username,password);       //读出文件中的用户名和密码
                     if(strcmp(username,user.consumer.username) == 0)          //如果用户名存在
                     {
+                        printf("开始检查\n");
                         temp = linkedlist_seek_username(pHead,user.consumer.username);
                         if(temp != NULL)
                         {
+                            printf("已经登录\n");
                             user.consumer.result = 1;
                             send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去
                             return ;

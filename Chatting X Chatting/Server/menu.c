@@ -19,6 +19,8 @@ void friend_managment(int conn_fd,struct node_server user);
 
 void group_managment(int conn_fd,struct node_server user);
 
+void file_managment(int conn_fd,struct node_server user);
+
 //void log_out_message(struct node_server user,char *str,char *ptr);            //下线提醒
 
 extern int epoll_fd;                       //在epoll_server中定义,此处为引用
@@ -29,29 +31,27 @@ extern char *get_time(void);
 
 extern list *pHead;
 
-void menu(int conn_fd)
+void menu(void *sock_fd)
 {
+    int conn_fd = *(int *)sock_fd;
     struct node_server user;                   //进行接受的结构体
     int ret;                                   //处理返回值
+    int sum;                                   //进行接收到的包进行求和
     list *temp;
     char str[30];
     char ptr[30];
     //memset(&user,0,sizeof(user));            //如若置空,以后多次交互不好取出信息 
        
     ret = recv(conn_fd,&user,sizeof(struct node_server),0);
-  
+    printf("ret = %d\n",ret);
+    sum = ret;
     if(ret <= 0)
     {
         if(ret < 0)                         //表示接受失败
             _error("recv",__LINE__);
         if(ret == 0)                     //表示对方已经关闭连接
         {
-            /*temp = linkedlist_seek_conn_fd(pHead,conn_fd);
-            strcpy(user.consumer.username,temp->name);
-            strcpy(str,"/home/Crow/Public/Information");
-            strcat(str,user.consumer.username);
-            strcat(str,"/friends_list");
-            log_out_message(user,str,user.consumer.username);*/
+            printf("客户端退出,开始删除节点\n");
             if(pHead->next != NULL)
             {
                 temp = linkedlist_seek_conn_fd(pHead,conn_fd);
@@ -74,8 +74,11 @@ void menu(int conn_fd)
     }
     if(ret > 0)
     {
-        while(ret != sizeof(struct node_server))
+        while(sum != sizeof(struct node_server))         
+        {
             ret = recv(conn_fd,&user,sizeof(struct node_server),0);
+            sum += ret;
+        }
         switch(user.flag)
         {
             case 1:                                       //表示执行登录操作
@@ -87,6 +90,9 @@ void menu(int conn_fd)
             case 3:
                 group_managment(conn_fd,user);            //进行聊天群的处理
                 break;
+            case 4:
+                file_managment(conn_fd,user);             //进行发送文件的处理
+                break;
         }
     }
     
@@ -96,27 +102,23 @@ void menu(int conn_fd)
     epoll_ctl(epoll_fd,EPOLL_CTL_MOD,conn_fd,&ep_ev);
 }
 
-/*不成熟的下线提醒*/
-/*void log_out_message(struct node_server user,char *str,char *ptr)    
+void file_managment(int conn_fd,struct node_server user)
 {
-    FILE *fp;
-    char ch;
     list *temp;
-    char group[20];
-    fp = fopen(str,"r+");
-    if((ch = fgetc(fp)) != EOF)
+    int ret;
+    temp = linkedlist_seek_conn_fd(pHead,conn_fd);
+    strcpy(user.my_firend.friend_message,temp->name);
+
+    //第一步,查找将要接受文件的用户
+    temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
+    if(temp == NULL)                  //离线模式
     {
-        fseek(fp,0L,0);
-        while(!feof(fp))
-        {
-            user.flag = 2;
-            user.my_firend.choice_friend = 8;
-            fscanf(fp,"%s\n",group);
-            temp = linkedlist_seek_username(pHead,group);
-            strcpy(user.my_firend.friends_name,ptr);
-            user.my_firend.friends_status = 0;
-            if(temp != NULL)
-            send(temp->conn_fd,&user,sizeof(struct node_server),0);
-        }
+        printf("离线模式\n");
+        return;
     }
-}*/
+    
+    //第二步,如果用户在线,则将信息填入,并且发送过去,发送人填在friend_message中
+    ret = send(temp->conn_fd,&user,sizeof(struct node_server),0);              //转发包
+    if(ret < 0)
+        _error("recv",__LINE__);
+}

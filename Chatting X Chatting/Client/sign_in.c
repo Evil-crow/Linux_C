@@ -3,14 +3,18 @@
 #include<sys/socket.h>
 #include<string.h>
 #include<unistd.h>
+#include<termio.h>
 #include"struct_node_client.h"
 
 extern void _error(const char *string,int line);
+
+extern int getch(void);                                          //无缓冲的获取输入的字符
 
 void sign_in(int sock_fd)
 {
     struct node_client user;
     int ret;                                              //处理返回值
+    char ch;
     user.flag = 1;                                        // 大结构体 中选择标记1 表示为 登录注册操作
     /*打印登录界面的菜单*/
     while(1)
@@ -18,13 +22,15 @@ void sign_in(int sock_fd)
         system("clear");                                      //清屏操作
         printf("\t\t\t\t===================================================================\n");
         printf("\t\t\t\t                     Welcome to Chatting_X_Chatting                \n");
-        printf("\t\t\t\t===================================================================\n\n\n");
-        printf("\t\t\t\t                             1.登录账号                             \n\n\n");
-        printf("\t\t\t\t                             2.注册账号                             \n\n\n");
-        printf("\t\t\t\t                             0.退出                                \n\n\n");
-        printf("\t\t\t\t===================================================================\n");
+        printf("\t\t\t\t===================================================================\n\n");
+        printf("\t\t\t\t                             1.登录账号                             \n\n");
+        printf("\t\t\t\t                             2.注册账号                             \n\n");
+        printf("\t\t\t\t                             0.退出                                \n\n");
+        printf("\t\t\t\t===================================================================\n\n");
         printf("\t\t\t\t请输入你的选择:");
-        scanf("%d",&user.consumer.choice_sign);
+        ch = getch( );
+        printf("\n");
+        user.consumer.choice_sign = ch - '0';
         switch(user.consumer.choice_sign)
         {
             case 1:                                                         //表示为登录操作
@@ -80,4 +86,3 @@ void sign_in(int sock_fd)
         }                                                     //完成客户端登录界面的退出,不需要与服务器发生交互.
     } 
 }
-
