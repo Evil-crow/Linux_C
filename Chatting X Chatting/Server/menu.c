@@ -105,20 +105,21 @@ void menu(void *sock_fd)
 void file_managment(int conn_fd,struct node_server user)
 {
     list *temp;
+    list *Temp;
     int ret;
     temp = linkedlist_seek_conn_fd(pHead,conn_fd);
     strcpy(user.my_firend.friend_message,temp->name);
 
     //第一步,查找将要接受文件的用户
-    temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
-    if(temp == NULL)                  //离线模式
+    Temp = linkedlist_seek_username(pHead,user.my_firend.friends_name);
+    if(Temp == NULL)                  //离线模式
     {
         printf("离线模式\n");
         return;
     }
     
     //第二步,如果用户在线,则将信息填入,并且发送过去,发送人填在friend_message中
-    ret = send(temp->conn_fd,&user,sizeof(struct node_server),0);              //转发包
+    ret = send(Temp->conn_fd,&user,sizeof(struct node_server),0);              //转发包
     if(ret < 0)
         _error("recv",__LINE__);
 }

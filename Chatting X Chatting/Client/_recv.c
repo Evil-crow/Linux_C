@@ -185,11 +185,11 @@ void _recv(void *socket_fd)
                 }
                 break;
             case 4:                                                              //表示是文件传输的操作
-                if(chat_status != 4)
+                if(chat_status != 4 && recv_user.my_file.file_flag == 1)
                     printf("%s向您发送文件,请尽快前往消息盒子查收!\n",recv_user.my_firend.friend_message);
-                int sp = open(recv_user.my_file.file_name,O_APPEND,0644);
-                write(sp,recv_user.my_file.file_data,sizeof(char));
-                close(sp);
+                fp = fopen(recv_user.my_file.file_name,"a+");
+                fwrite(recv_user.my_file.file_data,sizeof(char),recv_user.my_file.file_buffer,fp);
+                fclose(fp);
                 break;
         }
     }

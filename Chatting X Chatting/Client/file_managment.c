@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdlib.h>
 #include<unistd.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -13,13 +14,14 @@ unsigned long get_file_size(const char *path);
 
 void file_managment(int sock_fd)
 {
-    int fp;
+    FILE *fp;
     int ret;
     char ch;
     char file_constpath[200];                             //文件的绝对路径
     char file_constpath_copy[200];                        //文件路径的备份
     struct node_client user;                              //进行包发送要使用的结构体
     user.flag = 4;                                        //表示进行的是文件传输操作
+    user.my_file.file_flag = 1;
     
     printf("\t\t\t\t=====================================================================\n");
     printf("\t\t\t\t                             文件传输\n");
@@ -33,21 +35,24 @@ void file_managment(int sock_fd)
     __change(file_constpath_copy);                                     //转换
     strcpy(user.my_file.file_name,file_constpath_copy);              //转换过后获取到的是文件名
     printf("开始传输文件\n");
-    fp = open(file_constpath,O_RDONLY);                                 //r+打开文件
-    if(fp < 0)
+    fp = fopen(file_constpath,"r+");                                 //r+打开文件
+    if(fp == NULL)
     {
         printf("该文件不存在,请核实后重新发送!\n");
         return ;
     }
-    while(ret != 0)
+    while((ret = fread(user.my_file.file_data,sizeof(char),200,fp)) > 0)
     {
-        ret = read(fp,user.my_file.file_data,sizeof(char));
+        user.my_file.file_buffer = ret;
         send(sock_fd,&user,sizeof(struct node_client),0);            //进行文件内容的发送
         usleep(1000);
+        memset(&user,0,sizeof(struct node_client));
+        user.flag = 4;
     }
-    close(fp);
+    fclose(fp);
     printf("文件发送完成,接受不接受就不是我能管的了!\n");
     printf("按[Enter]键返回\n");
+    getchar( );
     if((ch = getchar( )) == '\n')
         return;
 }
