@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<sys/socket.h>
 #include"chat_data.h"
 #include "struct_node_client.h"
@@ -11,6 +12,7 @@ extern int chat_status;
 void view_box(int sock_fd)
 {
     chat_status = 4;
+    char ch;
     system("clear");
     printf("\t\t\t\t=====================================================================\n");
     printf("\t\t\t\t                              消息盒子\n");
@@ -18,13 +20,14 @@ void view_box(int sock_fd)
     if(recv_user.my_firend.choice_friend == 2)                //表明为添加好友请求
     {
         printf("\t\t\t\t收到好友请求!\n\n");
-        char ch;
         recv_user.decision = 1;
         recv_user.my_firend.choice_friend = 3;
         printf("\t\t\t\t%s 向您发送添加好友的请求,是否同意(0/1)?  ",recv_user.consumer.username);
         scanf("%d",&recv_user.decision);
         send(sock_fd,&recv_user,sizeof(struct node_client),0);     //反馈包发送
         printf("\t\t\t\t已经发送!\n");
+        chat_status = 0;
+        memset(&recv_user,0,sizeof(struct node_client));
         getchar( );
         if((ch = getchar( )) == '\n')
         return ;
@@ -32,10 +35,9 @@ void view_box(int sock_fd)
     if(recv_user.flag == 4)                                   //表明为发送文件的请求
     {
         printf("\t\t\t\t收到来自%s发送文件的请求\n",recv_user.my_firend.friend_message);
-        char ch;
         int choice; 
         printf("是否接受?(0/1)");
-        scanf("%d",choice);
+        scanf("%d",&choice);
         if(choice == 0)
         {
             remove(recv_user.my_file.file_name);
@@ -47,12 +49,17 @@ void view_box(int sock_fd)
         printf("文件接受完成!\n");
         printf("按[Enter]返回");
         chat_status = 0;
+        memset(&recv_user,0,sizeof(struct node_client));
+        getchar( );
         if((ch = getchar( )) == '\n')
         return ;
     }
     else
     {
         printf("暂无消息.请稍候再试\n");
+        chat_status = 0;
+        getchar( );
+        if((ch = getchar( )) == '\n')
         return ;
     }
 }

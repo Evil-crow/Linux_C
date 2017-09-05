@@ -33,10 +33,10 @@ struct group
 struct file
 {
     int                         file_flag;
-    int                         file_len;                           //传输的文件长度
-    int                         file_buffer;
+    //int                         file_len;                           //传输的文件长度
+    //int                         file_buffer;
     char                        file_name[MAX_STR];                 //传输的文件名
-    char                        file_data[200];                     //一次读取200字节的内容
+    char                        file_data[50];                     //一次读取200字节的内容
 };
 struct node_server
 {
@@ -45,6 +45,6 @@ struct node_server
     struct sign                  consumer;                           //进行登录的结构体
     struct friend_               my_firend;                          //进行私聊的结构体
     struct group                 my_group;                           //进行群聊的结构体
-    struct file                 my_file;                            //进行文件传输的结构体
+    struct file                  my_file;                            //进行文件传输的结构体
 };
 #endif

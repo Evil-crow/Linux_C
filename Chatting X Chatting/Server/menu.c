@@ -104,8 +104,8 @@ void menu(void *sock_fd)
 
 void file_managment(int conn_fd,struct node_server user)
 {
-    list *temp;
-    list *Temp;
+    list *temp;                                                      //进行发送人的查找
+    list *Temp;                                                      //进行目标的查找
     int ret;
     temp = linkedlist_seek_conn_fd(pHead,conn_fd);
     strcpy(user.my_firend.friend_message,temp->name);
@@ -119,6 +119,7 @@ void file_managment(int conn_fd,struct node_server user)
     }
     
     //第二步,如果用户在线,则将信息填入,并且发送过去,发送人填在friend_message中
+    printf("%s\n",user.my_file.file_data);
     ret = send(Temp->conn_fd,&user,sizeof(struct node_server),0);              //转发包
     if(ret < 0)
         _error("recv",__LINE__);

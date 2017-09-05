@@ -139,7 +139,6 @@ void sign_register(int conn_fd,struct node_server user)
             creat("groups_information",0644);
             creat("friends_list",0644);
             mkdir("Friends",0755);
-            mkdir("File",0755);
             user.consumer.result = 0;
             while(ret != sizeof(struct node_server))
                 ret = send(conn_fd,&user,sizeof(struct node_server),0);                      //将处理后的信息包发送回去

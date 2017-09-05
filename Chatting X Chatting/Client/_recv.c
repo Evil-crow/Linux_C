@@ -20,6 +20,7 @@ void _recv(void *socket_fd)
 
     int                  ret;             //用来处理返回值
     char                  ch;             //用于判断键位
+    int                   sp;             //进行系统调用打开的标识符
     FILE *fp;                             //用于buffer的文件指针
     while(1)
     {
@@ -185,11 +186,23 @@ void _recv(void *socket_fd)
                 }
                 break;
             case 4:                                                              //表示是文件传输的操作
-                if(chat_status != 4 && recv_user.my_file.file_flag == 1)
+                printf("已经接受到包\n");
+                if(recv_user.my_file.file_flag == 1)
                     printf("%s向您发送文件,请尽快前往消息盒子查收!\n",recv_user.my_firend.friend_message);
-                fp = fopen(recv_user.my_file.file_name,"a+");
-                fwrite(recv_user.my_file.file_data,sizeof(char),recv_user.my_file.file_buffer,fp);
-                fclose(fp);
+                printf("开始收文件\n");
+                if((sp = open(recv_user.my_file.file_name,O_RDWR | O_CREAT | O_APPEND,0777) == -1))
+                {    
+                    fp = fopen(recv_user.my_file.file_name,"W+");
+                    fclose(fp);
+                }
+                sp = open(recv_user.my_file.file_name,O_RDWR | O_CREAT | O_APPEND,0777);
+                if(sp == -1)
+                    _error("open",__LINE__);
+                printf("%s\n",recv_user.my_file.file_data);
+                ret = write(sp,recv_user.my_file.file_data,1);
+                if(ret == -1)
+                    perror("write");
+                close(sp);
                 break;
         }
     }

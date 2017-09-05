@@ -8,7 +8,7 @@
 #include"main.h"
 #include"struct_node_client.h"
 
-int chat_status = 0;              //不进入私聊前,置为0                      //定义全局标识位,用于标识,是否处于私聊状态 
+int chat_status;              //不进入盒子/私聊前,置为0                      //定义全局标识位,用于标识,是否处于私聊状态 
 
 char *get_time(void);
 
@@ -22,10 +22,10 @@ int main(int argc,char **argv)
 {
     int sock_fd;                                //创建套接字
     pthread_t    thid;                          //创建线程ID
+    chat_status = 0;                            //标明在消息盒子外
 
     system("clear");                            //运行程序清屏操作
     sock_fd = sock_fd_create( );
-    //signal(SIGINT,SIG_IGN);                     //屏蔽Ctrl-C的意外信号
     if(sock_fd < 0)                             //创建用于连接的sock_fd
     {
         printf("\t\t\t\tError\n");
