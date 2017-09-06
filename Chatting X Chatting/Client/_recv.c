@@ -1,3 +1,9 @@
+/* 文件:_recv.c
+ *
+ * 作用:用于客户端中进行线程接收使用的,_recv线程一直进行资源的接收
+ *
+ */
+
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -22,6 +28,7 @@ void _recv(void *socket_fd)
     char                  ch;             //用于判断键位
     int                   sp;             //进行系统调用打开的标识符
     FILE *fp;                             //用于buffer的文件指针
+    char  path[100];                      //进行文件的接收
     while(1)
     {
         //while(ret != sizeof(struct node_client))
@@ -186,20 +193,19 @@ void _recv(void *socket_fd)
                 }
                 break;
             case 4:                                                              //表示是文件传输的操作
-                printf("已经接受到包\n");
-                if(recv_user.my_file.file_flag == 1)
-                    printf("%s向您发送文件,请尽快前往消息盒子查收!\n",recv_user.my_firend.friend_message);
-                printf("开始收文件\n");
-                if((sp = open(recv_user.my_file.file_name,O_RDWR | O_CREAT | O_APPEND,0777) == -1))
+                strcpy(path,"/home/Crow/Public/File/");
+                if(recv_user.my_file.file_flag == 1 && chat_status == 4)
+                    printf("\n\t\t\t\t%s向您发送文件,请尽快前往消息盒子查收!\n",recv_user.my_firend.friend_message);
+                strcat(path,recv_user.my_file.file_name);
+                if((sp = open(path,O_RDWR | O_CREAT | O_APPEND,0777) == -1))
                 {    
-                    fp = fopen(recv_user.my_file.file_name,"W+");
+                    fp = fopen(path,"W+");
                     fclose(fp);
                 }
-                sp = open(recv_user.my_file.file_name,O_RDWR | O_CREAT | O_APPEND,0777);
+                sp = open(path,O_RDWR | O_CREAT | O_APPEND,0777);
                 if(sp == -1)
                     _error("open",__LINE__);
-                printf("%s\n",recv_user.my_file.file_data);
-                ret = write(sp,recv_user.my_file.file_data,1);
+                ret = write(sp,recv_user.my_file.file_data,20);
                 if(ret == -1)
                     perror("write");
                 close(sp);

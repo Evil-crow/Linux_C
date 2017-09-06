@@ -1,3 +1,10 @@
+/* 文件:mian.c
+ *
+ * 作用:服务器的主函数模块
+ *
+ */
+
+
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>

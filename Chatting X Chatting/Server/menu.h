@@ -1,3 +1,10 @@
+/* 文件:menu.h
+ *
+ * 作用:提供menu.c的声明
+ *
+ */
+
+
 #ifndef _MENU_H
 #define _MENU_H
 

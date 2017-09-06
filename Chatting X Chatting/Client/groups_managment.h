@@ -1,3 +1,10 @@
+/* 文件:group_managemnt.h
+ *
+ * 作用:group_managment.c的相关声明
+ *
+ */
+
+
 #ifndef _GROUP_MANAGMENT_
 #define _GROUP_MANAGMENT_
 

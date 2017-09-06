@@ -1,3 +1,10 @@
+/* 文件:Linklist.c
+ *
+ * 作用:自行封装的链表操作
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

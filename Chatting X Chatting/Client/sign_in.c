@@ -1,3 +1,10 @@
+/* 文件:sign_register.c
+ *
+ * 作用:登录注册功能的实现
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<sys/socket.h>

@@ -1,3 +1,10 @@
+/* 文件:epoll_server.h
+ *
+ * 作用:epoll_server.c相关的声明
+ *
+ */
+
+
 #ifndef _EPOLL_SERVER_H
 #define _EPOLL_SERVER_H
 

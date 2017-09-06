@@ -1,3 +1,10 @@
+/* 文件:friend_managment.c
+ *
+ * 作用:friend相关函数的模块实现
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -65,6 +72,7 @@ void chatting_with_friend(int sock_fd)
     printf("私聊结束\n");
     chat_status = 0;
     printf("\n按[Enter]键返回~\n");
+    getchar( );
     if((ch = getchar( )) == '\n')
     return ;                                                    //退出聊天界面
 }
@@ -87,6 +95,7 @@ void add_new_friend(int sock_fd)
     printf("\t\t\t\t添加好友请求已发送\n");
     printf("\t\t\t\t按[Enter]键返回~\n");
     printf("\t\t\t\t=====================================================================\n");
+    getchar( );
     if((ch = getchar( )) == '\n')
     return ;
 }

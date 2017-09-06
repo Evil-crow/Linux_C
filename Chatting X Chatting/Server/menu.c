@@ -1,3 +1,10 @@
+/* 文件:menu.c
+ *
+ * 作用:服务器事务处理模块
+ *
+ */
+
+
 #include<stdio.h>
 #include<sys/socket.h>
 #include<sys/types.h>

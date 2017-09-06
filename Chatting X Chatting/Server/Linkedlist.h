@@ -1,3 +1,10 @@
+/* 文件:Linkedlist.h
+ *
+ * 作用:Linkedlist.c所需要的相关声明
+ *
+ */
+
+
 #ifndef _LINKED_LIST_H
 #define _LINKED_LIST_H
 

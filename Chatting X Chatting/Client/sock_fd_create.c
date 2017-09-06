@@ -1,3 +1,10 @@
+/* 文件:sock_fd_create.c
+ *
+ * 作用:进行客户端使用的套接字连接
+ *
+ */
+
+
 #include<stdio.h>
 #include<unistd.h>
 #include<sys/socket.h>

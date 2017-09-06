@@ -1,3 +1,10 @@
+/* 文件:sign_register.c
+ *
+ * 作用:服务器对于登录注册事务的处理
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

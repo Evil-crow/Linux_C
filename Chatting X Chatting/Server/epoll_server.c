@@ -1,3 +1,10 @@
+/* 文件:epoll_server.c
+ *
+ * 作用:使用epoll对多个套接字进行管理
+ *
+ */
+
+
 #include<stdio.h>
 #include<sys/epoll.h>
 #include<sys/socket.h>

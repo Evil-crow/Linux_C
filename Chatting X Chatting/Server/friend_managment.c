@@ -1,3 +1,10 @@
+/* 文件:friend_managment.c
+ *
+ * 作用:服务器对friend相关模块的处理
+ *
+ */
+
+
 #include<stdio.h>
 #include<string.h>
 #include<sys/types.h>

@@ -1,3 +1,10 @@
+/* 文件:struct_node_server.c
+ *
+ * 作用:服务器端使用的结构体声明
+ *
+ */
+
+
 #ifndef _STRUCT_NODE_SERVER_H
 #define _STRUCT_NODE_SERVER_H
 
@@ -33,8 +40,6 @@ struct group
 struct file
 {
     int                         file_flag;
-    //int                         file_len;                           //传输的文件长度
-    //int                         file_buffer;
     char                        file_name[MAX_STR];                 //传输的文件名
     char                        file_data[50];                     //一次读取200字节的内容
 };

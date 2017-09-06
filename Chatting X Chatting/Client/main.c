@@ -1,3 +1,10 @@
+/* 文件:main.c
+ *
+ * 作用:客户端的总体功能组织
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>

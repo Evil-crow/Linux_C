@@ -1,3 +1,10 @@
+/* 文件:friend_managemnt.h
+ *
+ * 作用:friend_managment.c得相关声明
+ *
+ */
+
+
 #ifndef _FRIENDS_MANAGMENT_
 #define _FRIENDS_MANAGMENT_
 

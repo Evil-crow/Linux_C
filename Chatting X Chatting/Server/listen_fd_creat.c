@@ -1,3 +1,10 @@
+/* 文件:listen_fd_creat.c
+ *
+ * 作用:监听套接字的创建
+ *
+ */
+
+
 #include<stdio.h>
 #include<arpa/inet.h>
 #include<unistd.h>

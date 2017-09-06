@@ -1,3 +1,10 @@
+/* 文件:main.h
+ *
+ * 作用:提供main.c的声明
+ *
+ */
+
+
 #ifndef _MAIN_H
 #define _MAIN_H
       

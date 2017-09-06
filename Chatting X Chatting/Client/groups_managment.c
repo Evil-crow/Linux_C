@@ -1,3 +1,10 @@
+/* 文件:group_managment.c
+ *
+ * 作用:group相关模块的功能实现
+ *
+ */
+
+
 #include<stdio.h>
 #include<string.h>
 #include<unistd.h>
@@ -85,6 +92,7 @@ void create_new_group(int sock_fd)
     }
     printf("\t\t\t\t按[Enter]键返回~\n");
     printf("\t\t\t\t=====================================================================\n");
+    getchar( );
     if((ch = getchar ( )) == '\n')
     return ;                                                          //返回菜单
 }
@@ -112,7 +120,8 @@ void join_group(int sock_fd)
         return ;
     }
     printf("\t\t\t\t按[Enter]键返回~\n");
-    printf("\t\t\t\t=====================================================================\n");  
+    printf("\t\t\t\t=====================================================================\n");
+    getchar( );  
     if((ch = getchar( )) == '\n')
     return ;
 }

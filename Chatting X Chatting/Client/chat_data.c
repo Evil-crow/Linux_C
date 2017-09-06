@@ -1,3 +1,10 @@
+/* 文件:chat_data.c
+ *
+ * 作用:客户端中的功能选项模块
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>

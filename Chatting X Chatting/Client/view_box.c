@@ -1,3 +1,10 @@
+/* 文件:view_box.c
+ *
+ * 作用:消息盒子功能的实现
+ *
+ */
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -34,28 +41,31 @@ void view_box(int sock_fd)
     }
     if(recv_user.flag == 4)                                   //表明为发送文件的请求
     {
+        char path[100] = "/home/Crow/Public/File/";
         printf("\t\t\t\t收到来自%s发送文件的请求\n",recv_user.my_firend.friend_message);
         int choice; 
-        printf("是否接受?(0/1)");
+        printf("\t\t\t\t是否接受?(0/1)");
         scanf("%d",&choice);
         if(choice == 0)
         {
-            remove(recv_user.my_file.file_name);
-            printf("按[Enter]返回");
+            strcat(path,recv_user.my_file.file_name);
+            remove(path);
+            printf("\t\t\t\t按[Enter]返回");
             chat_status = 0;
+            getchar( );
             if((ch = getchar( )) == '\n')
             return ;
         }
-        printf("文件接受完成!\n");
-        printf("按[Enter]返回");
-        chat_status = 0;
-        memset(&recv_user,0,sizeof(struct node_client));
+        printf("\t\t\t\t文件接受完成!\n");
+        printf("\t\t\t\t按[Enter]返回");
+        recv_user.flag = 9;
         getchar( );
         if((ch = getchar( )) == '\n')
         return ;
     }
     else
     {
+        memset(&recv_user,0,sizeof(struct node_client));
         printf("暂无消息.请稍候再试\n");
         chat_status = 0;
         getchar( );

@@ -1,3 +1,10 @@
+/* 文件:group_managment.c
+ *
+ * 作用:进行group相关模块的功能处理
+ *
+ */
+
+
 #include<stdio.h>
 #include<string.h>
 #include<sys/types.h>
